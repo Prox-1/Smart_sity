@@ -3,19 +3,18 @@ import traci
 import itertools
 import collections
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 from utils import sumo_utils
 
-actions = [+5, 0, -5]
+MAX_WAITING_TIME_PER_EDGE = 300
+MAX_QUEUE_LENGTH_PER_EDGE = 50
+MAX_VEHICLES_ARRIVED_PER_STEP = 50
+MAX_SPEED = 70/3.6
 
 
-def create_state_table(tls_id, get_controlled_edges: bool = False):
+def create_state_table(tls_id, controlled_edges):
     queue_categories = ['Low', 'Medium', 'High']
     phases = sumo_utils.get_all_tls_phases(tls_id)
-    controlled_lanes = traci.trafficlight.getControlledLanes(
-        tls_id)
-    controlled_edges = set()
-    for lane_id in controlled_lanes:
-        controlled_edges.add(traci.lane.getEdgeID(lane_id))
     all_states = []
     combinations_of_queues = list(itertools.product(
         queue_categories, repeat=len(controlled_edges)))
@@ -23,8 +22,6 @@ def create_state_table(tls_id, get_controlled_edges: bool = False):
         for queue_combination in combinations_of_queues:
             state = (phase,) + queue_combination
             all_states.append(state)
-    if get_controlled_edges:
-        return all_states, controlled_edges
     return all_states
 
 
@@ -57,16 +54,68 @@ def create_state_for_tls(tls_id, controlled_edges):
     return (current_phase_index,) + tuple(queue_categories_on_edges)
 
 
-def calculate_reward(tls_id, controlled_edges):
+def get_metrics(controlled_edges):
+    waiting_time = 0
+    halting_number = 0
+    for edge_id in controlled_edges:
+        waiting_time += traci.edge.getWaitingTime(
+            edge_id)  # type: ignore
+        halting_number += traci.edge.getLastStepHaltingNumber(
+            edge_id)  # type: ignore
+    return waiting_time, halting_number
+
+
+def calculate_local_reward(controlled_edges, count_of_all_edges):
     """
     Рассчитывает награду для Q-learning агента на основе метрик трафика.
     """
     reward = 0.0
-    total_waiting_time = 0
-    for edge_id in controlled_edges:
-        total_waiting_time += traci.edge.getWaitingTime(edge_id)
-    reward = - (total_waiting_time * 1.5)
+    waiting_time, halting_number = get_metrics(
+        controlled_edges)
+    max_possible_local_waiting_time = MAX_WAITING_TIME_PER_EDGE * \
+        max(1, count_of_all_edges)
+    normalized_local_waiting_time = waiting_time / \
+        max_possible_local_waiting_time if max_possible_local_waiting_time > 0 else 0.0
+
+    max_possible_local_queue_length = MAX_QUEUE_LENGTH_PER_EDGE * \
+        max(1, count_of_all_edges)
+    normalized_local_queue_length = halting_number / \
+        max_possible_local_queue_length if max_possible_local_queue_length > 0 else 0.0
+
+    reward = -1.0 * normalized_local_waiting_time \
+             - 0.5 * normalized_local_queue_length
+
     return reward
+
+
+def calculate_global_reward(tls_ids, controlled_edges_dict, count_of_all_edges):
+    """
+    Рассчитывает глобальную награду для Q-learning агента на основе метрик трафика.
+    """
+    global_waiting_time = 0.0
+    global_halting_number = 0.0
+    for tls_id in tls_ids:
+        waiting_time, halting_number = get_metrics(
+            controlled_edges_dict[tls_id])
+        global_waiting_time += waiting_time
+        global_halting_number += halting_number
+    max_possible_global_waiting_time = MAX_WAITING_TIME_PER_EDGE * \
+        max(1, count_of_all_edges)
+    normalized_global_waiting_time = global_waiting_time / \
+        max_possible_global_waiting_time if max_possible_global_waiting_time > 0 else 0.0
+
+    max_possible_global_queue_length = MAX_QUEUE_LENGTH_PER_EDGE * \
+        max(1, count_of_all_edges)
+    normalized_global_queue_length = global_halting_number / \
+        max_possible_global_queue_length if max_possible_global_queue_length > 0 else 0.0
+
+    reward = -0.7 * normalized_global_waiting_time \
+             - 0.3 * normalized_global_queue_length
+    return reward
+
+
+def calculate_total_reward(local_reward, global_reward, weight_local=0.5, weight_global=0.5):
+    return weight_local*local_reward + weight_global*global_reward
 
 
 class QLearningAgent:
@@ -119,7 +168,7 @@ class QLearningAgent:
         # defaultdict не сериализуется напрямую, преобразуем в обычный dict
         save_data = {k: dict(v) for k, v in self.q_table.items()}
         np.save(filename, save_data)
-        print(f"Q-table for {self.tls_id} saved to {filename}")
+        # print(f"Q-table for {self.tls_id} saved to {filename}")
 
     def load_q_table(self, filename="q_table.npy"):
         """Загружает Q-таблицу из файла."""
@@ -128,7 +177,7 @@ class QLearningAgent:
             # Преобразуем загруженный dict обратно в defaultdict
             self.q_table = collections.defaultdict(
                 lambda: {action: 0.0 for action in self.actions}, loaded_data)
-            print(f"Q-table for {self.tls_id} loaded from {filename}")
+            # print(f"Q-table for {self.tls_id} loaded from {filename}")
         else:
             print(
                 f"No Q-table file found at {filename}. Starting with fresh Q-table.")

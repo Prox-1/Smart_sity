@@ -9,5 +9,7 @@ dependencies = [
     "pandas>=2.3.2",
     "path>=17.1.1",
     "pathlib>=1.0.1",
+    "scikit-learn>=1.7.2",
+    "tqdm>=4.67.1",
     "traci>=1.24.0",
 ]

@@ -40,16 +40,27 @@ def set_phase_duration_by_action(tls_id: str, action_str: int):
             min_dur = current_phase_object.minDur
             max_dur = current_phase_object.maxDur
         else:
-            print(
-                f"Warning: Could not find active logic or phase object for TLS_ID: {tls_id}, Phase Index: {current_phase_index}. Using default min/max durations.")
+            pass
+            # print(
+            #   f"Warning: Could not find active logic or phase object for TLS_ID: {tls_id}, Phase Index: {current_phase_index}. Using      default min/max durations.")
     else:
-        print(
-            f"Warning: No traffic light logic definitions found for TLS_ID: {tls_id}. Using default min/max durations.")
+        pass
+        # print(
+        #   f"Warning: No traffic light logic definitions found for TLS_ID: {tls_id}. Using default min/max durations.")
 
     change_value = int(action_str)
-    new_desired_duration = current_remaining_duration + change_value
+    new_desired_duration = current_remaining_duration + change_value  # type: ignore
     final_duration = max(min_dur, min(new_desired_duration, max_dur))
 
     traci.trafficlight.setPhaseDuration(tls_id, final_duration)
 
-    print(f"TLS {tls_id}: Action '{action_str}'. Old remaining: {current_remaining_duration:.1f}s, New set duration: {final_duration:.1f}s (min:{min_dur:.1f}s, max:{max_dur:.1f}s)")
+    # print(f"TLS {tls_id}: Action '{action_str}'. Old remaining: {current_remaining_duration:.1f}s, New set duration: {final_duration:.1f}s (min:{min_dur:.1f}s, max:{max_dur:.1f}s)")
+
+
+def get_tls_controlled_edges(tls_id):
+    controlled_lanes = traci.trafficlight.getControlledLanes(
+        tls_id)
+    controlled_edges = set()
+    for lane_id in controlled_lanes:
+        controlled_edges.add(traci.lane.getEdgeID(lane_id))
+    return controlled_edges
