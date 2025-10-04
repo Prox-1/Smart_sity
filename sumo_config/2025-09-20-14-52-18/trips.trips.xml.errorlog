@@ -1,0 +1,7 @@
+Warning: At actuated tlLogic 'cluster_12485993451_12485993457_444743027_999091207', linkIndex 8,9,10 has no controlling detector.
+Warning: No connection between edge '261657003#2' and edge '261657003#2' found.
+Warning: busStop '1849564731' for vehicle '30_trolleybus_99:1' on lane '261657003#2_0' is not downstream the current route.
+Warning: No connection between edge '261657003#2' and edge '261657003#2' found.
+Warning: Vehicle '25_bus_37:0' has no valid route from edge '261657003#2' to stop edge '261657003#2'.
+Warning: Teleporting vehicle '25_bus_37:0'; waited too long (wrong lane, disconnected), lane='261657003#2_0', time=478.00.
+Warning: Vehicle '25_bus_37:0' ends teleporting on edge '261657003#2', time=478.00.

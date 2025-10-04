@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-09-20 14:52:25.786325 by $Id: ptlines2flows.py v1_3_1+0313-ccb31df3eb jakob.erdmann@dlr.de 2019-09-02 13:26:32 +0200 $ v1_24_0+0000-b72eb3fabc8
+<configuration>
+    <net-file value="C:\Program Files (x86)\Eclipse\Sumo\tools\2025-09-20-14-52-18\osm.net.xml.gz"/>
+    <ptlines-file value="C:\Program Files (x86)\Eclipse\Sumo\tools\2025-09-20-14-52-18\osm_ptlines.xml"/>
+    <ptstops-file value="C:\Program Files (x86)\Eclipse\Sumo\tools\2025-09-20-14-52-18\osm_stops.add.xml"/>
+    <output-file value="C:\Program Files (x86)\Eclipse\Sumo\tools\2025-09-20-14-52-18\osm_pt.rou.xml"/>
+    <stopinfos-file value="C:\Program Files (x86)\Eclipse\Sumo\tools\2025-09-20-14-52-18\stopinfos.xml"/>
+    <routes-file value="C:\Program Files (x86)\Eclipse\Sumo\tools\2025-09-20-14-52-18\vehroutes.xml"/>
+    <trips-file value="C:\Program Files (x86)\Eclipse\Sumo\tools\2025-09-20-14-52-18\trips.trips.xml"/>
+    <min-stops value="0"/>
+    <extend-to-fringe value="True"/>
+    <random-begin value="True"/>
+    <seed value="42"/>
+    <ignore-errors value="True"/>
+    <vtype-prefix value="pt_"/>
+    <verbose value="True"/>
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <vType id="pt_bus" vClass="bus" speedFactor="0.95"/>
+    <vType id="pt_tram" vClass="tram" speedFactor="1.0"/>
+    <vType id="pt_train" vClass="rail"/>
+    <vType id="pt_subway" vClass="subway"/>
+    <vType id="pt_light_rail" vClass="rail_urban"/>
+    <vType id="pt_monorail" vClass="rail_urban"/>
+    <vType id="pt_trolleybus" vClass="bus" speedFactor="0.95"/>
+    <vType id="pt_minibus" vClass="bus" speedFactor="0.95"/>
+    <vType id="pt_share_taxi" vClass="taxi" speedFactor="0.95"/>
+    <vType id="pt_aerialway" vClass="cable_car" length="2.5" width="2" personCapacity="4"/>
+    <vType id="pt_ferry" vClass="ship"/>
+    <trip id="0_bus_96:0" type="pt_bus" depart="3.0" departLane="best" from="174088693" to="28951980#1">
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828281263" duration="30"/>  <!-- Подгоренская -->
+        <stop busStop="1828284271" duration="30"/>  <!-- Птичий рынок -->
+        <stop busStop="1828286578" duration="30"/>  <!-- Беспаловой -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="-4485478415" duration="30"/>  <!-- Московский пр-т -->
+        <stop busStop="-2911646473" duration="30"/>  <!-- Карпинского -->
+        <stop busStop="-2911646478" duration="30"/>  <!-- Шишкова -->
+        <stop busStop="3227037441" duration="30"/>  <!-- Больница №7 -->
+    </trip>
+    <trip id="1_bus_96:1" type="pt_bus" depart="15.0" departLane="best" from="866853351#0" to="164790872">
+        <stop busStop="3227037442" duration="30"/>  <!-- Больница №7 -->
+        <stop busStop="4485478402" duration="30"/>  <!-- Шишкова -->
+        <stop busStop="4488933246" duration="30"/>  <!-- Карпинского -->
+        <stop busStop="4485478415" duration="30"/>  <!-- Московский пр-т -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1828286575" duration="30"/>  <!-- Беспаловой -->
+        <stop busStop="1828284272" duration="30"/>  <!-- Птичий рынок -->
+        <stop busStop="1846673387" duration="30"/>  <!-- Подгоренская -->
+        <stop busStop="1846673386" duration="30"/>  <!-- Новгородская -->
+    </trip>
+    <trip id="2_bus_115:0" type="pt_bus" depart="15.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="3_bus_95:0" type="pt_bus" depart="17.0" departLane="best" from="1155202125" to="587766767">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="-4485478415" duration="30"/>  <!-- Московский пр-т -->
+        <stop busStop="-2911646473" duration="30"/>  <!-- Карпинского -->
+        <stop busStop="-2911646478" duration="30"/>  <!-- Шишкова -->
+        <stop busStop="2911646475" duration="30"/>  <!-- Питомник -->
+    </trip>
+    <trip id="4_bus_47:0" type="pt_bus" depart="19.0" departLane="best" from="171989082" to="38809000#2">
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="5_bus_47:1" type="pt_bus" depart="27.0" departLane="best" from="373696528" to="38284697">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+    </trip>
+    <trip id="6_bus_3В:0" type="pt_bus" depart="47.0" departLane="best" from="-38373347" to="28951980#1">
+        <stop busStop="3665704206" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="3052536277" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="-4485478415" duration="30"/>  <!-- Московский пр-т -->
+        <stop busStop="-2911646473" duration="30"/>  <!-- Карпинского -->
+        <stop busStop="-2911646478" duration="30"/>  <!-- Шишкова -->
+        <stop busStop="3227037441" duration="30"/>  <!-- Больница №7 -->
+    </trip>
+    <trip id="7_bus_3В:1" type="pt_bus" depart="52.0" departLane="best" from="866853351#1" to="1190628393">
+        <stop busStop="3227037442" duration="30"/>  <!-- Больница №7 -->
+        <stop busStop="-4485478402" duration="30"/>  <!-- Шишкова -->
+        <stop busStop="-4488933246" duration="30"/>  <!-- Карпинского -->
+        <stop busStop="-4485478415" duration="30"/>  <!-- Московский пр-т -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="3052536276" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="-9089520321" duration="30"/>  <!-- ул. Новгородская -->
+    </trip>
+    <trip id="8_bus_60С:0" type="pt_bus" depart="55.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="9_bus_60С:1" type="pt_bus" depart="58.0" departLane="best" from="1155202125" to="38809000#2">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="10_trolleybus_99:0" type="pt_trolleybus" depart="60.0" departLane="best" from="1155202125" to="454548725#0">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1674349139" duration="30"/>  <!-- Кинотеатр "Мир" -->
+    </trip>
+    <trip id="11_trolleybus_7:0" type="pt_trolleybus" depart="93.0" departLane="best" from="-287544278#0" to="78247504">
+        <stop busStop="-2152940201" duration="30"/>  <!-- ЖК "Острова" -->
+        <stop busStop="-2548254261" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="12_bus_69:0" type="pt_bus" depart="98.0" departLane="best" from="866853351#0" to="587766767">
+        <stop busStop="3227037442" duration="30"/>  <!-- Больница №7 -->
+        <stop busStop="2911646475" duration="30"/>  <!-- Питомник -->
+    </trip>
+    <trip id="13_bus_49:0" type="pt_bus" depart="102.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="14_bus_77:0" type="pt_bus" depart="119.0" departLane="best" from="174088693" to="78247504">
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828281263" duration="30"/>  <!-- Подгоренская -->
+        <stop busStop="1828284271" duration="30"/>  <!-- Птичий рынок -->
+        <stop busStop="1828286578" duration="30"/>  <!-- Беспаловой -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="15_bus_77:1" type="pt_bus" depart="125.0" departLane="best" from="1155202125" to="164790872">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1828286575" duration="30"/>  <!-- Беспаловой -->
+        <stop busStop="1828284272" duration="30"/>  <!-- Птичий рынок -->
+        <stop busStop="1846673387" duration="30"/>  <!-- Подгоренская -->
+    </trip>
+    <trip id="16_bus_49:1" type="pt_bus" depart="126.0" departLane="best" from="1155202125" to="38809000#2">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="17_bus_3:0" type="pt_bus" depart="131.0" departLane="best" from="373696528" to="38809000#2">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="18_bus_37А:0" type="pt_bus" depart="132.0" departLane="best" from="454548726" to="78247504">
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="19_bus_37А:1" type="pt_bus" depart="133.0" departLane="best" from="1155202125" to="454548725#0">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1674349139" duration="30"/>  <!-- Кинотеатр "Мир" -->
+    </trip>
+    <trip id="20_bus_9КС:0" type="pt_bus" depart="136.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="21_bus_5А:0" type="pt_bus" depart="137.0" departLane="best" from="378143958#0" to="78247504">
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="22_bus_5А:1" type="pt_bus" depart="139.0" departLane="best" from="1155202125" to="1027066849#1">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+    </trip>
+    <trip id="23_bus_58В:0" type="pt_bus" depart="160.0" departLane="best" from="454548726" to="164790872">
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+    </trip>
+    <trip id="24_bus_58В:1" type="pt_bus" depart="160.0" departLane="best" from="174088693" to="454548725#0">
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1674349139" duration="30"/>  <!-- Кинотеатр "Мир" -->
+    </trip>
+    <trip id="25_bus_37:0" type="pt_bus" depart="165.0" departLane="best" from="-38373347" to="1027066849#1">
+        <stop busStop="-9089520321" duration="30"/>  <!-- ул. Новгородская -->
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="3052536277" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="9469052117" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1849564731" duration="30"/>  <!-- Универсам "Молодёжный" -->
+    </trip>
+    <trip id="26_bus_37:1" type="pt_bus" depart="166.0" departLane="best" from="179481566#0" to="454548725#0">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1674349139" duration="30"/>  <!-- Кинотеатр "Мир" -->
+    </trip>
+    <trip id="27_bus_90:0" type="pt_bus" depart="173.0" departLane="best" from="171989082" to="78247504">
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="28_bus_90:1" type="pt_bus" depart="188.0" departLane="best" from="1155202125" to="38284697">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+    </trip>
+    <trip id="29_trolleybus_7:1" type="pt_trolleybus" depart="189.0" departLane="best" from="1155202125" to="-287544278#0">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="-2911646478" duration="30"/>  <!-- Шишкова -->
+        <stop busStop="2911646475" duration="30"/>  <!-- Питомник -->
+        <stop busStop="-2911646477" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="-2911646476" duration="30"/>  <!-- ЖК "Острова" -->
+    </trip>
+    <trip id="30_trolleybus_99:1" type="pt_trolleybus" depart="201.0" departLane="best" from="261657003#2" to="261657003#2">
+        <stop busStop="9469052117" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1849564731" duration="30"/>  <!-- Универсам "Молодёжный" -->
+    </trip>
+    <trip id="31_bus_111:0" type="pt_bus" depart="204.0" departLane="best" from="1155202125" to="38809000#2">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="32_bus_111:1" type="pt_bus" depart="218.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="33_bus_27:0" type="pt_bus" depart="222.0" departLane="best" from="1155202125" to="454548725#0">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1674349139" duration="30"/>  <!-- Кинотеатр "Мир" -->
+    </trip>
+    <trip id="34_bus_27:1" type="pt_bus" depart="227.0" departLane="best" from="454548726" to="78247504">
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="35_bus_49М:0" type="pt_bus" depart="227.0" departLane="best" from="1155202125" to="164790872">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="3052536276" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+    </trip>
+    <trip id="36_bus_49М:1" type="pt_bus" depart="237.0" departLane="best" from="174088693" to="78247504">
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="3052536277" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="37_bus_54:0" type="pt_bus" depart="253.0" departLane="best" from="378143958#0" to="164790872">
+        <stop busStop="3052536276" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+    </trip>
+    <trip id="38_bus_54:1" type="pt_bus" depart="303.0" departLane="best" from="174088693" to="454548725#0">
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="3052536277" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1674349139" duration="30"/>  <!-- Кинотеатр "Мир" -->
+    </trip>
+    <trip id="39_bus_80:0" type="pt_bus" depart="321.0" departLane="best" from="1155202125" to="38809000#2">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="40_bus_80:1" type="pt_bus" depart="326.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="41_bus_41:0" type="pt_bus" depart="331.0" departLane="best" from="171989082" to="78247504">
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="42_bus_41:1" type="pt_bus" depart="334.0" departLane="best" from="1155202125" to="454548725#0">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1674349139" duration="30"/>  <!-- Кинотеатр "Мир" -->
+    </trip>
+    <trip id="43_bus_110:0" type="pt_bus" depart="346.0" departLane="best" from="1155202125" to="38809000#2">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="44_bus_110:1" type="pt_bus" depart="353.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="45_bus_9КА:0" type="pt_bus" depart="362.0" departLane="best" from="1155202125" to="38809000#2">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="46_bus_120А:0" type="pt_bus" depart="365.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="47_bus_120А:1" type="pt_bus" depart="371.0" departLane="best" from="1155202125" to="38809000#2">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="48_bus_5:0" type="pt_bus" depart="381.0" departLane="best" from="866853351#0" to="-287544278#0">
+        <stop busStop="3227037442" duration="30"/>  <!-- Больница №7 -->
+        <stop busStop="2911646475" duration="30"/>  <!-- Питомник -->
+        <stop busStop="-2911646477" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="-2911646476" duration="30"/>  <!-- ЖК "Острова" -->
+    </trip>
+    <trip id="49_bus_5:1" type="pt_bus" depart="383.0" departLane="best" from="-287544278#0" to="28951980#1">
+        <stop busStop="-2911646476" duration="30"/>  <!-- ЖК "Острова" -->
+        <stop busStop="-2911646474" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="-4485478415" duration="30"/>  <!-- Московский пр-т -->
+        <stop busStop="-2911646473" duration="30"/>  <!-- Карпинского -->
+        <stop busStop="-2911646478" duration="30"/>  <!-- Шишкова -->
+        <stop busStop="3227037441" duration="30"/>  <!-- Больница №7 -->
+    </trip>
+    <trip id="50_bus_15:0" type="pt_bus" depart="383.0" departLane="best" from="454548726" to="164790872">
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="3052536276" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+    </trip>
+    <trip id="51_bus_15:1" type="pt_bus" depart="388.0" departLane="best" from="174088693" to="1027066849#1">
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="3052536277" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+    </trip>
+    <trip id="52_bus_16В:0" type="pt_bus" depart="389.0" departLane="best" from="-38373347" to="454548725#0">
+        <stop busStop="3665704206" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="3052536277" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1674349139" duration="30"/>  <!-- Кинотеатр "Мир" -->
+    </trip>
+    <trip id="53_bus_16В:1" type="pt_bus" depart="393.0" departLane="best" from="127328085#0" to="-38373347">
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="3052536276" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="-9089520321" duration="30"/>  <!-- ул. Новгородская -->
+    </trip>
+    <trip id="54_bus_18:0" type="pt_bus" depart="406.0" departLane="best" from="587766759#0" to="28951980#1">
+        <stop busStop="3227037452" duration="30"/>  <!-- Питомник -->
+        <stop busStop="3227037441" duration="30"/>  <!-- Больница №7 -->
+    </trip>
+    <trip id="55_bus_18:1" type="pt_bus" depart="410.0" departLane="best" from="866853351#0" to="587766767">
+        <stop busStop="3227037442" duration="30"/>  <!-- Больница №7 -->
+        <stop busStop="2911646475" duration="30"/>  <!-- Питомник -->
+    </trip>
+    <trip id="56_bus_28:0" type="pt_bus" depart="418.0" departLane="best" from="171989082" to="38284697">
+        <stop busStop="3052536276" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828281263" duration="30"/>  <!-- Подгоренская -->
+        <stop busStop="1828284271" duration="30"/>  <!-- Птичий рынок -->
+        <stop busStop="1828286578" duration="30"/>  <!-- Беспаловой -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="-9089473008" duration="30"/>  <!-- ул. 303 стрелковой дивизии -->
+        <stop busStop="-9089473004" duration="30"/>  <!-- ул. Радиозаводская -->
+    </trip>
+    <trip id="57_bus_28:1" type="pt_bus" depart="422.0" departLane="best" from="171989082" to="188335314">
+        <stop busStop="3052536276" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828281263" duration="30"/>  <!-- Подгоренская -->
+        <stop busStop="1828284271" duration="30"/>  <!-- Птичий рынок -->
+    </trip>
+    <trip id="58_bus_49Б:0" type="pt_bus" depart="437.0" departLane="best" from="179481566#0" to="192222461#4">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="59_bus_49Б:1" type="pt_bus" depart="437.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="60_bus_64:0" type="pt_bus" depart="441.0" departLane="best" from="1155202125" to="38809000#2">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+    </trip>
+    <trip id="61_bus_64:1" type="pt_bus" depart="465.0" departLane="best" from="373696528" to="78247504">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="62_bus_63:0" type="pt_bus" depart="483.0" departLane="best" from="-38373347" to="78247504">
+        <stop busStop="3665704206" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828281263" duration="30"/>  <!-- Подгоренская -->
+        <stop busStop="1828284271" duration="30"/>  <!-- Птичий рынок -->
+        <stop busStop="1828286578" duration="30"/>  <!-- Беспаловой -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="63_bus_63:1" type="pt_bus" depart="484.0" departLane="best" from="1155202125" to="38373347">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="2926661055" duration="30"/>  <!-- Беговая -->
+        <stop busStop="2926661068" duration="30"/>  <!-- 303 Стрелковой Дивизии -->
+        <stop busStop="2926661056" duration="30"/>  <!-- Верещагина -->
+        <stop busStop="2926661060" duration="30"/>  <!-- Солнечная -->
+        <stop busStop="3665705637" duration="30"/>  <!-- Донская -->
+        <stop busStop="9089520321" duration="30"/>  <!-- ул. Новгородская -->
+    </trip>
+    <trip id="64_bus_69:1" type="pt_bus" depart="485.0" departLane="best" from="587766759#0" to="28951980#1">
+        <stop busStop="3227037452" duration="30"/>  <!-- Питомник -->
+        <stop busStop="3227037441" duration="30"/>  <!-- Больница №7 -->
+    </trip>
+    <trip id="65_bus_75:0" type="pt_bus" depart="497.0" departLane="best" from="866853351#0" to="164790872">
+        <stop busStop="3227037442" duration="30"/>  <!-- Больница №7 -->
+        <stop busStop="4485478402" duration="30"/>  <!-- Шишкова -->
+        <stop busStop="4488933246" duration="30"/>  <!-- Карпинского -->
+        <stop busStop="4485478415" duration="30"/>  <!-- Московский пр-т -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="3052536276" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+    </trip>
+    <trip id="66_bus_75:1" type="pt_bus" depart="505.0" departLane="best" from="174088693" to="28951980#1">
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="3052536277" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="-4485478415" duration="30"/>  <!-- Московский пр-т -->
+        <stop busStop="-2911646473" duration="30"/>  <!-- Карпинского -->
+        <stop busStop="-2911646478" duration="30"/>  <!-- Шишкова -->
+        <stop busStop="3227037441" duration="30"/>  <!-- Больница №7 -->
+    </trip>
+    <trip id="67_bus_81:0" type="pt_bus" depart="508.0" departLane="best" from="174088693" to="78247504">
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="68_bus_81:1" type="pt_bus" depart="517.0" departLane="best" from="1155202125" to="164790872">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="3052536276" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+        <stop busStop="1771199566" duration="30"/>  <!-- Владимира Невского -->
+    </trip>
+    <trip id="69_bus_84:0" type="pt_bus" depart="525.0" departLane="best" from="373696528" to="1027066849#1">
+        <stop busStop="2917832671" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+    </trip>
+    <trip id="70_bus_29:0" type="pt_bus" depart="535.0" departLane="best" from="866853351#0" to="587766767">
+        <stop busStop="3227037442" duration="30"/>  <!-- Больница №7 -->
+        <stop busStop="2911646475" duration="30"/>  <!-- Питомник -->
+    </trip>
+    <trip id="71_bus_105:0" type="pt_bus" depart="548.0" departLane="best" from="179481566#0" to="65758492#0">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1828286575" duration="30"/>  <!-- Беспаловой -->
+        <stop busStop="1828284272" duration="30"/>  <!-- Птичий рынок -->
+        <stop busStop="1846673387" duration="30"/>  <!-- Подгоренская -->
+        <stop busStop="1846673386" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="3665704206" duration="30"/>  <!-- Новгородская -->
+    </trip>
+    <trip id="72_bus_105:1" type="pt_bus" depart="561.0" departLane="best" from="-38373347" to="78247504">
+        <stop busStop="3665704206" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828281263" duration="30"/>  <!-- Подгоренская -->
+        <stop busStop="1828284271" duration="30"/>  <!-- Птичий рынок -->
+        <stop busStop="1828286578" duration="30"/>  <!-- Беспаловой -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="73_bus_74:0" type="pt_bus" depart="565.0" departLane="best" from="-38373347" to="1027066849#1">
+        <stop busStop="3665704206" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1828274452" duration="30"/>  <!-- Новгородская -->
+        <stop busStop="1771199567" duration="30"/>  <!-- Владимира Невского -->
+        <stop busStop="3052536277" duration="30"/>  <!-- Владимира Невского (Универсам "Молодёжный") -->
+    </trip>
+    <trip id="74_bus_74:1" type="pt_bus" depart="574.0" departLane="best" from="866853351#1" to="414841236#5">
+        <stop busStop="3227037442" duration="30"/>  <!-- Больница №7 -->
+        <stop busStop="2911646475" duration="30"/>  <!-- Питомник -->
+    </trip>
+    <trip id="75_bus_125:0" type="pt_bus" depart="583.0" departLane="best" from="171989082" to="78247504">
+        <stop busStop="1648120191" duration="30"/>  <!-- Универсам "Молодёжный" -->
+        <stop busStop="1648124816" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648127681" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648130838" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648137532" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648141156" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="2908797330" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="2908797328" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1643955249" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+    </trip>
+    <trip id="76_bus_125:1" type="pt_bus" depart="593.0" departLane="best" from="1155202125" to="38284697">
+        <stop busStop="1643998027" duration="30"/>  <!-- ул. 45 стр. Дивизии -->
+        <stop busStop="1643999455" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="3366023907" duration="30"/>  <!-- Памятник Славы -->
+        <stop busStop="1648142128" duration="30"/>  <!-- Хользунова -->
+        <stop busStop="1648243506" duration="30"/>  <!-- Кинотеатр "Мир" -->
+        <stop busStop="1648244043" duration="30"/>  <!-- Школа -->
+        <stop busStop="1648244580" duration="30"/>  <!-- 60 Армии -->
+        <stop busStop="1648250256" duration="30"/>  <!-- Институт искусств -->
+        <stop busStop="1648252258" duration="30"/>  <!-- 60 лет ВЛКСМ -->
+        <stop busStop="1648253666" duration="30"/>  <!-- Универсам "Молодёжный" -->
+    </trip>
+</routes>

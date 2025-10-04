@@ -27,7 +27,7 @@ def set_phase_duration_by_action(tls_id: str, action_str: int):
     all_logics_definitions = traci.trafficlight.getCompleteRedYellowGreenDefinition(
         tls_id)
     min_dur = 0
-    max_dur = 9999
+    max_dur = 180
     if all_logics_definitions:
         current_program_id = traci.trafficlight.getProgram(tls_id)
         active_logic = None
@@ -55,6 +55,37 @@ def set_phase_duration_by_action(tls_id: str, action_str: int):
     traci.trafficlight.setPhaseDuration(tls_id, final_duration)
 
     # print(f"TLS {tls_id}: Action '{action_str}'. Old remaining: {current_remaining_duration:.1f}s, New set duration: {final_duration:.1f}s (min:{min_dur:.1f}s, max:{max_dur:.1f}s)")
+
+
+def set_phase_duration_for_new_phase(tls_id: str, delta_sec: int):
+    """
+    Вызывать сразу ПОСЛЕ перехода на новую фазу. Устанавливает итоговую длительность этой фазы
+    как (базовая_длительность + delta), зажимая в [minDur, maxDur]. Не трогает фазу в середине.
+    """
+
+    current_phase_index = traci.trafficlight.getPhase(tls_id)
+    all_logics = traci.trafficlight.getCompleteRedYellowGreenDefinition(tls_id)
+    if not all_logics:
+        return
+
+    current_program_id = traci.trafficlight.getProgram(tls_id)
+    active_logic = next(
+        (lg for lg in all_logics if lg.programID == current_program_id), None)
+
+    if not active_logic or not (0 <= current_phase_index < len(active_logic.phases)):
+        return
+
+    ph = active_logic.phases[current_phase_index]
+    # duration может быть не задан, тогда берем minDur
+    base = getattr(ph, "duration", ph.minDur)
+    min_dur = ph.minDur
+    max_dur = ph.maxDur if ph.maxDur > 0 else max(
+        base, min_dur)  # на всякий случай
+    desired_total = base + int(delta_sec)
+    total = max(min_dur, min(desired_total, max_dur))
+    # ВАЖНО: setPhaseDuration задает ОСТАВШЕЕСЯ время текущей фазы,
+    # поэтому вызывать сразу после смены фазы — это фактически задать её общую длительность.
+    traci.trafficlight.setPhaseDuration(tls_id, total)
 
 
 def get_tls_controlled_edges(tls_id):

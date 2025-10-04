@@ -65,20 +65,21 @@ def get_metrics(controlled_edges):
     return waiting_time, halting_number
 
 
-def calculate_local_reward(controlled_edges, count_of_all_edges):
+def calculate_local_reward(controlled_edges):
     """
     Рассчитывает награду для Q-learning агента на основе метрик трафика.
     """
     reward = 0.0
     waiting_time, halting_number = get_metrics(
         controlled_edges)
+    num_edges_local = max(1, len(controlled_edges))
     max_possible_local_waiting_time = MAX_WAITING_TIME_PER_EDGE * \
-        max(1, count_of_all_edges)
+        max(1, num_edges_local)
     normalized_local_waiting_time = waiting_time / \
         max_possible_local_waiting_time if max_possible_local_waiting_time > 0 else 0.0
 
     max_possible_local_queue_length = MAX_QUEUE_LENGTH_PER_EDGE * \
-        max(1, count_of_all_edges)
+        max(1, num_edges_local)
     normalized_local_queue_length = halting_number / \
         max_possible_local_queue_length if max_possible_local_queue_length > 0 else 0.0
 

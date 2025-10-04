@@ -4,6 +4,7 @@ import traci
 import os
 import sys
 from tqdm import tqdm
+from pathlib import Path
 
 # Установка служебного имени SUMO_HOME
 if 'SUMO_HOME' not in os.environ:
@@ -16,7 +17,10 @@ else:
     sys.exit("Environment variable 'SUMO_HOME' is not set. Please set it to your SUMO installation directory.")
 
 sumoBinary = "sumo"  # sumo-gui
-sumoConfig = r"C:\Program Files (x86)\Eclipse\Sumo\tools\2025-09-20-14-52-18\osm.sumocfg"
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+relative_cfg = Path("sumo_config") / "2025-09-20-14-52-18" / "osm.sumocfg"
+candidate_cfg = (PROJECT_DIR / relative_cfg).resolve()
+sumoConfig = str(candidate_cfg)
 sumoCmd = [sumoBinary, "-c", sumoConfig]
 sumoCmd.append("--no-warnings")
 sumoCmd.extend(["--verbose", "false"])
@@ -25,13 +29,12 @@ output_base_dir = os.path.join(
     script_dir, "..", "agents", "total_reward_lr01_df099_epd0999_every10s")
 os.makedirs(output_base_dir, exist_ok=True)
 
-actions = [+10, 0, -10]
+actions = [+20, +10, 0, -10, -20]
 
 # --- Параметры обучения Q-learning ---
 NUM_EPISODES = 100      # Количество эпизодов обучения
 # Максимальное количество шагов симуляции в одном эпизоде (например, 1 час)
 MAX_SIMULATION_STEPS = 7200
-DECISION_INTERVAL = 10    # Агент принимает решение каждые N секунд симуляции
 # Запуск SUMO
 print("Starting SUMO simulation and data extraction...")
 
@@ -41,7 +44,6 @@ try:
     traci.start(sumoCmd)
     tls_ids = traci.trafficlight.getIDList()
     controlled_edges_dict = {}
-    count_of_all_edges = 0
     for tls_id in tls_ids:
         controlled_edges = sumo_utils.get_tls_controlled_edges(tls_id)
         states = q_learning.create_state_table(
@@ -55,7 +57,7 @@ try:
                                                    epsilon_decay=0.999,
                                                    min_epsilon=0.01)
         controlled_edges_dict[tls_id] = controlled_edges
-        count_of_all_edges += len(controlled_edges)
+    unique_edges_count = len(set().union(*controlled_edges_dict.values()))
     traci.close()
     for episode in tqdm(range(NUM_EPISODES)):
         traci.start(sumoCmd)
@@ -68,15 +70,17 @@ try:
                 tls_id, controlled_edges_dict[tls_id])
 
         for current_step in tqdm(range(MAX_SIMULATION_STEPS)):
+            last_phase_idx = {tls_id: traci.trafficlight.getPhase(
+                tls_id) for tls_id in tls_ids}
             traci.simulationStep()
             if traci.simulation.getMinExpectedNumber() == 0 and current_step >= 0:
                 continue
             current_time = traci.simulation.getTime()
             global_reward = q_learning.calculate_global_reward(
-                tls_ids, controlled_edges_dict, count_of_all_edges)
+                tls_ids, controlled_edges_dict, unique_edges_count)
             for tls_id in tls_ids:
                 local_reward = q_learning.calculate_local_reward(
-                    controlled_edges_dict[tls_id], count_of_all_edges)
+                    controlled_edges_dict[tls_id])
                 total_reward = q_learning.calculate_total_reward(
                     local_reward, global_reward)
                 total_reward_episode[tls_id] += total_reward
@@ -89,10 +93,11 @@ try:
                         total_reward,
                         current_state
                     )
-                if int(current_time) % DECISION_INTERVAL == 0:
+                cur_phase = traci.trafficlight.getPhase(tls_id)
+                if cur_phase != last_phase_idx[tls_id]:
                     chosen_action_value = agents[tls_id].choose_action(
                         current_state)
-                    sumo_utils.set_phase_duration_by_action(
+                    sumo_utils.set_phase_duration_for_new_phase(
                         tls_id, chosen_action_value)
                     last_states[tls_id] = current_state
                     last_actions[tls_id] = chosen_action_value

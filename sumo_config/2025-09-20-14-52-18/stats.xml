@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-10-03 20:46:26 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.net.xml.gz"/>
+        <route-files value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm_pt.rou.xml,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.bus.trips.xml,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.passenger.trips.xml"/>
+        <additional-files value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.poly.xml.gz,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm_stops.add.xml,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\output.add.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\tripinfos.xml"/>
+        <stop-output value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\stopinfos.xml"/>
+        <statistic-output value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\stats.xml"/>
+    </output>
+
+    <processing>
+        <ignore-route-errors value="true"/>
+        <tls.actuated.jam-threshold value="30"/>
+    </processing>
+
+    <routing>
+        <device.rerouting.adaptation-steps value="18"/>
+        <device.rerouting.adaptation-interval value="10"/>
+    </routing>
+
+    <report>
+        <verbose value="false"/>
+        <no-warnings value="true"/>
+        <duration-log.statistics value="true"/>
+        <no-step-log value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="52429"/>
+    </traci_server>
+
+    <random_number>
+        <seed value="42"/>
+    </random_number>
+
+    <gui_only>
+        <gui-settings-file value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.view.xml"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
+    <performance clockBegin="91668.33" clockEnd="92063.13" clockDuration="394.80" traciDuration="380.42" realTimeFactor="9.12" vehicleUpdatesPerSecond="2106.00" personUpdatesPerSecond="0.00" begin="0.00" end="3600.00" duration="3600.00"/>
+    <vehicles loaded="2551" inserted="2527" running="267" waiting="23"/>
+    <teleports total="39" jam="19" yield="12" wrongLane="8"/>
+    <safety collisions="0" emergencyStops="0" emergencyBraking="0"/>
+    <persons loaded="0" running="0" jammed="0"/>
+    <personTeleports total="0" abortWait="0" wrongDest="0"/>
+    <vehicleTripStatistics count="2260" routeLength="2369.19" speed="9.23" duration="321.55" waitingTime="90.60" timeLoss="149.19" departDelay="5.06" departDelayWaiting="-1.00" totalTravelTime="726713.00" totalDepartDelay="11439.42"/>
+    <pedestrianStatistics number="0" routeLength="0.00" duration="0.00" timeLoss="0.00"/>
+    <rideStatistics number="0"/>
+    <transportStatistics number="0"/>
+</statistics>

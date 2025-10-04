@@ -1,9 +1,23 @@
+from utils.test_utils import *
+from tqdm import tqdm
+import csv
 from utils import q_learning, sumo_utils
 import traci
 import os
+import random
 import sys
+import numpy as np
+from pathlib import Path
 
-# Установка служебного имени SUMO_HOME
+# ----------------- Параметры -----------------
+STEP_INTERVAL = 10             # собирать метрики каждые 10 шагов
+MAX_SIMULATION_STEPS = 3600
+
+# SUMO
+os.environ["PYTHONHASHSEED"] = "0"
+random.seed(42)
+np.random.seed(42)
+
 if 'SUMO_HOME' not in os.environ:
     os.environ['SUMO_HOME'] = r"C:\Program Files (x86)\Eclipse\Sumo"
 if 'SUMO_HOME' in os.environ:
@@ -11,33 +25,59 @@ if 'SUMO_HOME' in os.environ:
     if tools_path not in sys.path:
         sys.path.append(tools_path)
 else:
-    sys.exit("Environment variable 'SUMO_HOME' is not set. Please set it to your SUMO installation directory.")
-
-sumoBinary = "sumo-gui"  # sumo-gui
-sumoConfig = r"C:\Program Files (x86)\Eclipse\Sumo\tools\2025-09-20-14-52-18\osm.sumocfg"
-sumoCmd = [sumoBinary, "-c", sumoConfig]
-
-actions = [+5, 0, -5]
-
-# --- Параметры обучения Q-learning ---
-NUM_EPISODES = 50        # Количество эпизодов обучения
-# Максимальное количество шагов симуляции в одном эпизоде (например, 1 час)
-MAX_SIMULATION_STEPS = 3600
-DECISION_INTERVAL = 10     # Агент принимает решение каждые N секунд симуляции
-# Запуск SUMO
-print("Starting SUMO simulation and data extraction...")
-
+    sys.exit("Environment variable 'SUMO_HOME' is not set.")
+sumoBinary = "sumo"  # при необходимости укажите полный путь к sumo-gui.exe
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+relative_cfg = Path("sumo_config") / "2025-09-20-14-52-18" / "osm.sumocfg"
+candidate_cfg = (PROJECT_DIR / relative_cfg).resolve()
+sumoConfig = str(candidate_cfg)
+sumoCmd = [sumoBinary, "-c", sumoConfig, "--seed", "42"]
+sumoCmd.append("--no-warnings")
+sumoCmd.extend(["--verbose", "false"])
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 agents_folder_path = os.path.join(
     current_script_dir, '..', 'agents', 'total_reward_lr01_df099_epd0999_every10s')
 
+
+# Выход
+OUTPUT_DIR = "metrics/total_reward_lr01_df099_epd0999_every10s"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+network_csv_path = os.path.join(OUTPUT_DIR, "network_metrics.csv")
+tls_csv_path = os.path.join(OUTPUT_DIR, "tls_metrics.csv")
+network_fields = [
+    "step", "time",
+    "active_vehicles",
+    "mean_speed_network",
+    "total_queue_len",
+    "total_waiting_time_snapshot"
+]
+
+tls_fields = [
+    "step", "time", "tls_id", "phase_index",
+    "tls_queue_len",
+    "tls_waiting_time_snapshot",
+    "tls_mean_speed"
+]
+
+print("Starting SUMO simulation and metrics sampling every",
+      STEP_INTERVAL, "steps...")
+
+network_f, network_writer = write_csv_header(network_csv_path, network_fields)
+tls_f, tls_writer = write_csv_header(tls_csv_path, tls_fields)
+
+actions = [+20, +10, 0, -10, -20]
+
 agents = {}
+controlled_edges_dict = {}
 
 try:
     traci.start(sumoCmd)
-    tls_ids = traci.trafficlight.getIDList()
-    controlled_edges_dict = {}
+    # TLS -> контролируемые полосы (без дубликатов)
+    tls_ids = list(traci.trafficlight.getIDList())
+    tls_to_lanes = {}
     for tls_id in tls_ids:
+        lanes = dedup(traci.trafficlight.getControlledLanes(tls_id))
+        tls_to_lanes[tls_id] = lanes
         controlled_edges_dict[tls_id] = sumo_utils.get_tls_controlled_edges(
             tls_id)
         states = q_learning.create_state_table(
@@ -45,31 +85,86 @@ try:
         agents[tls_id] = q_learning.QLearningAgent(tls_id=tls_id,
                                                    states=states,
                                                    actions=actions,
-                                                   learning_rate=0.05,
+                                                   learning_rate=0.00,
                                                    discount_factor=0.8,
-                                                   epsilon=1.0,
-                                                   epsilon_decay=0.995,
-                                                   min_epsilon=0.01)
-
+                                                   epsilon=0.00,
+                                                   epsilon_decay=1,
+                                                   min_epsilon=0.00)
         agents[tls_id].load_q_table(
             os.path.join(agents_folder_path, f"q_table_{tls_id}.npy"))
 
-    current_step = 0
-    while current_step < MAX_SIMULATION_STEPS:
+    # Полосы всей сети для сетевых метрик
+    all_lanes = list(traci.lane.getIDList())
+    step = 0
+
+    for step in tqdm(range(MAX_SIMULATION_STEPS)):
+        last_phase_idx = {tls_id: traci.trafficlight.getPhase(
+            tls_id) for tls_id in tls_ids}
         traci.simulationStep()
-        current_time = traci.simulation.getTime()
-        for tls_id in tls_ids:
-            current_state = q_learning.create_state_for_tls(
-                tls_id, controlled_edges_dict[tls_id])
-            if int(current_time) % DECISION_INTERVAL == 0:
-                chosen_action_value = agents[tls_id].choose_action(
-                    current_state)
-                sumo_utils.set_phase_duration_by_action(
-                    tls_id, chosen_action_value)
-        current_step += 1
-        if traci.simulation.getMinExpectedNumber() == 0 and current_step > 1:
+        sim_time = traci.simulation.getTime()
+
+        # События шага
+        departed_ids = traci.simulation.getDepartedIDList()
+        arrived_ids = traci.simulation.getArrivedIDList()
+        # Сбор метрик только на выборочных шагах
+
+        if step % STEP_INTERVAL == 0:
+            veh_ids = traci.vehicle.getIDList()
+            active_vehicles = len(veh_ids)
+
+            # Средняя скорость по всем ТС (на моменте выборки)
+            mean_speed_network = 0.0
+            if active_vehicles > 0:
+                sum_speed = 0.0
+                for vid in veh_ids:
+                    sum_speed += traci.vehicle.getSpeed(vid)
+                mean_speed_network = sum_speed / active_vehicles
+
+            # Очередь и ожидание по сети (снимок)
+            total_queue_len = 0
+            total_waiting_time_snapshot = 0.0
+            for lid in all_lanes:
+                total_queue_len += traci.lane.getLastStepHaltingNumber(lid)
+                total_waiting_time_snapshot += traci.lane.getWaitingTime(lid)
+
+            # Запись сетевых метрик
+            network_writer.writerow({
+                "step": step,
+                "time": sim_time,
+                "active_vehicles": active_vehicles,
+                "mean_speed_network": mean_speed_network,
+                "total_queue_len": total_queue_len,
+                "total_waiting_time_snapshot": total_waiting_time_snapshot
+            })
+            # Метрики по каждому светофору
+
+            for tls_id in tls_ids:
+                current_state = q_learning.create_state_for_tls(
+                    tls_id, controlled_edges_dict[tls_id])
+                cur_phase = traci.trafficlight.getPhase(tls_id)
+                if cur_phase != last_phase_idx[tls_id]:
+                    chosen_action_value = agents[tls_id].choose_action(
+                        current_state)
+                    sumo_utils.set_phase_duration_by_action(
+                        tls_id, chosen_action_value)
+                lanes = tls_to_lanes[tls_id]
+                phase_index = traci.trafficlight.getPhase(tls_id)
+                tls_queue_len = sum_halting_on_lanes(lanes)
+                tls_waiting = sum_waiting_time_on_lanes(lanes)
+                tls_mean_speed = weighted_mean_speed_on_lanes(lanes)
+                tls_writer.writerow({
+                    "step": step,
+                    "time": sim_time,
+                    "tls_id": tls_id,
+                    "phase_index": phase_index,
+                    "tls_queue_len": tls_queue_len,
+                    "tls_waiting_time_snapshot": tls_waiting,
+                    "tls_mean_speed": tls_mean_speed
+                })
+        # Раннее завершение, если трафика больше нет
+        if traci.simulation.getMinExpectedNumber() == 0 and step > 1:
             print(
-                f"Simulation ended early at step {current_step} due to no more vehicles.")
+                f"Simulation ended early at step {step} due to no more vehicles.")
             break
     traci.close()
 
@@ -78,8 +173,8 @@ except traci.exceptions.TraCIException as e:
 finally:
     try:
         traci.close()
-    except traci.exceptions.FatalTraCIError:
+    except:
         pass
-    except Exception as e:
-        print(f"Error closing TraCI connection: {e}")
-    print("Test process finished.")
+    network_f.close()
+    tls_f.close()
+    print("Sampling finished. CSV saved to:", OUTPUT_DIR)

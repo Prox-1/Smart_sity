@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-09-20 14:52:23 by Eclipse SUMO netconvert Version 1.24.0
+<netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <type-files value="${SUMO_HOME}\data\typemap\osmNetconvert.typ.xml,${SUMO_HOME}\data\typemap\osmNetconvertAerialway.typ.xml"/>
+        <osm-files value="osm_bbox.osm.xml.gz"/>
+    </input>
+
+    <output>
+        <output-file value="osm.net.xml.gz"/>
+        <output.street-names value="true"/>
+        <output.original-names value="true"/>
+        <ptstop-output value="osm_stops.add.xml"/>
+        <ptline-output value="osm_ptlines.xml"/>
+        <ptline-clean-up value="true"/>
+    </output>
+
+    <projection>
+        <proj.utm value="true"/>
+    </projection>
+
+    <processing>
+        <geometry.remove value="true"/>
+        <roundabouts.guess value="true"/>
+    </processing>
+
+    <tls_building>
+        <tls.discard-simple value="true"/>
+        <tls.join value="true"/>
+        <tls.guess-signals value="true"/>
+        <tls.default-type value="actuated"/>
+    </tls_building>
+
+    <ramp_guessing>
+        <ramps.guess value="true"/>
+    </ramp_guessing>
+
+    <junctions>
+        <junctions.join value="true"/>
+        <junctions.corner-detail value="5"/>
+    </junctions>
+
+    <railway>
+        <railway.topology.repair value="true"/>
+    </railway>
+
+</netconvertConfiguration>
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <busStop id="-2152940201" name="ЖК &quot;Острова&quot;" lane="-287544278#0_0" startPos="14.86" endPos="29.86" friendlyPos="true" lines="7"/>
+    <busStop id="-2548254261" name="Памятник Славы" lane="-38377939#3_0" startPos="14.87" endPos="29.87" friendlyPos="true" lines="7"/>
+    <busStop id="-2911646473" name="Карпинского" lane="-414841238#4_0" startPos="74.28" endPos="89.28" friendlyPos="true" lines="96 95 3В 5 75"/>
+    <busStop id="-2911646474" name="Памятник Славы" lane="-38377939#3_0" startPos="15.11" endPos="30.11" friendlyPos="true" lines="5"/>
+    <busStop id="-2911646476" name="ЖК &quot;Острова&quot;" lane="-287544278#0_0" startPos="14.65" endPos="29.65" friendlyPos="true" lines="7 5"/>
+    <busStop id="-2911646477" name="Хользунова" lane="-287544278#6_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="7 5"/>
+    <busStop id="-2911646478" name="Шишкова" lane="-981597898#1_0" startPos="0.22" endPos="15.22" friendlyPos="true" lines="96 95 3В 7 5 75"/>
+    <busStop id="-4485478402" name="Шишкова" lane="-981597898#0_0" startPos="1.18" endPos="16.18" friendlyPos="true" lines="3В"/>
+    <busStop id="-4485478415" name="Московский пр-т" lane="-192222450#6_0" startPos="54.73" endPos="69.73" friendlyPos="true" lines="96 95 3В 5 75"/>
+    <busStop id="-4488933246" name="Карпинского" lane="-414841238#4_0" startPos="60.30" endPos="75.30" friendlyPos="true" lines="3В"/>
+    <busStop id="-9089473004" name="ул. Радиозаводская" lane="-188335311#2_0" startPos="0.00" endPos="10.08" friendlyPos="true" lines="28"/>
+    <busStop id="-9089473008" name="ул. 303 стрелковой дивизии" lane="-981597901_0" startPos="425.55" endPos="440.55" friendlyPos="true" lines="28"/>
+    <busStop id="-9089520321" name="ул. Новгородская" lane="-38373347_0" startPos="70.50" endPos="85.50" friendlyPos="true" lines="3В 37 16В"/>
+    <busStop id="1643955249" name="ул. 45 стр. Дивизии" lane="135082497#1_0" startPos="67.19" endPos="82.19" friendlyPos="true" lines="115 60С 7 49 77 37А 9КС 5А 90 111 27 49М 80 41 110 120А 28 49Б 64 63 81 105 125"/>
+    <busStop id="1643998027" name="ул. 45 стр. Дивизии" lane="179481566#0_0" startPos="79.97" endPos="94.97" friendlyPos="true" lines="95 60С 99 77 49 37А 5А 90 7 111 27 49М 80 41 110 9КА 120А 64 63 81 125"/>
+    <busStop id="1643999455" name="Памятник Славы" lane="192222461#4_0" startPos="7.48" endPos="22.48" friendlyPos="true" lines="96 60С 99 77 49 37А 5А 90 111 27 49М 80 41 110 9КА 120А 64 75 81 125"/>
+    <busStop id="1648120191" name="Универсам &quot;Молодёжный&quot;" lane="170096909#1_0" startPos="16.25" endPos="31.25" friendlyPos="true" lines="47 3В 5А 58В 90 49М 54 16В 75 81 125"/>
+    <busStop id="1648124816" name="60 лет ВЛКСМ" lane="313864612#0_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="47 3В 5А 58В 90 49М 54 16В 75 81 125"/>
+    <busStop id="1648127681" name="Институт искусств" lane="313864612#4_0" startPos="49.02" endPos="64.02" friendlyPos="true" lines="47 3В 5А 58В 90 49М 54 16В 75 81 125"/>
+    <busStop id="1648130838" name="60 Армии" lane="313864612#13_0" startPos="19.98" endPos="34.98" friendlyPos="true" lines="47 3В 5А 58В 90 49М 54 16В 75 81 125"/>
+    <busStop id="1648137532" name="Школа" lane="313864612#14_0" startPos="47.44" endPos="62.44" friendlyPos="true" lines="47 3В 5А 58В 90 49М 54 16В 75 81 125"/>
+    <busStop id="1648141156" name="Кинотеатр &quot;Мир&quot;" lane="151974260#1_0" startPos="14.89" endPos="29.89" friendlyPos="true" lines="47 3В 37А 5А 90 27 49М 41 75 81 125"/>
+    <busStop id="1648142128" name="Хользунова" lane="287246976#3_0" startPos="42.99" endPos="57.99" friendlyPos="true" lines="96 47 99 77 37А 5А 90 27 49М 41 75 81 84 125"/>
+    <busStop id="1648243506" name="Кинотеатр &quot;Мир&quot;" lane="127328085#0_0" startPos="37.10" endPos="52.10" friendlyPos="true" lines="47 5А 58В 90 49М 15 75 81 84 125"/>
+    <busStop id="1648244043" name="Школа" lane="127328085#6_0" startPos="34.80" endPos="49.80" friendlyPos="true" lines="47 5А 58В 49М 15 75 81 84 125"/>
+    <busStop id="1648244580" name="60 Армии" lane="127328085#11_0" startPos="34.27" endPos="49.27" friendlyPos="true" lines="47 5А 58В 90 49М 15 75 81 84 125"/>
+    <busStop id="1648250256" name="Институт искусств" lane="179483091#3_0" startPos="6.45" endPos="21.45" friendlyPos="true" lines="47 5А 58В 90 49М 15 75 81 84 125"/>
+    <busStop id="1648252258" name="60 лет ВЛКСМ" lane="313864611#0_0" startPos="6.58" endPos="21.58" friendlyPos="true" lines="47 5А 58В 90 49М 15 75 81 84 125"/>
+    <busStop id="1648253666" name="Универсам &quot;Молодёжный&quot;" lane="313864611#5_0" startPos="44.24" endPos="59.24" friendlyPos="true" lines="47 5А 58В 90 49М 15 75 81 84 125"/>
+    <busStop id="1674349139" name="Кинотеатр &quot;Мир&quot;" lane="454548725#0_0" startPos="9.06" endPos="24.06" friendlyPos="true" lines="99 37А 58В 27 54 41 16В"/>
+    <busStop id="1771199566" name="Владимира Невского" lane="37908462#2_0" startPos="178.84" endPos="193.84" friendlyPos="true" lines="58В 49М 54 15 28 75 81"/>
+    <busStop id="1771199567" name="Владимира Невского" lane="37908464#1_0" startPos="1.99" endPos="16.99" friendlyPos="true" lines="3В 58В 37 49М 54 15 16В 75 81 74"/>
+    <busStop id="1828274452" name="Новгородская" lane="373696537_0" startPos="17.40" endPos="32.40" friendlyPos="true" lines="96 77 37 16В 28 63 75 105 74"/>
+    <busStop id="1828281263" name="Подгоренская" lane="104071737#3_0" startPos="40.66" endPos="55.66" friendlyPos="true" lines="96 77 28 63 105"/>
+    <busStop id="1828284271" name="Птичий рынок" lane="362223418_0" startPos="14.19" endPos="29.19" friendlyPos="true" lines="96 77 28 63 105"/>
+    <busStop id="1828284272" name="Птичий рынок" lane="69558465#1_0" startPos="12.10" endPos="27.10" friendlyPos="true" lines="96 77"/>
+    <busStop id="1828286575" name="Беспаловой" lane="349283329#0_0" startPos="148.37" endPos="163.37" friendlyPos="true" lines="96 77"/>
+    <busStop id="1828286578" name="Беспаловой" lane="349283350#1_0" startPos="51.69" endPos="66.69" friendlyPos="true" lines="96 77 28 63 105"/>
+    <busStop id="1846673386" name="Новгородская" lane="347995180#6_0" startPos="101.90" endPos="116.90" friendlyPos="true" lines="96"/>
+    <busStop id="1846673387" name="Подгоренская" lane="347995180#4_0" startPos="9.81" endPos="24.81" friendlyPos="true" lines="96 77"/>
+    <busStop id="1849564731" name="Универсам &quot;Молодёжный&quot;" lane="261657003#2_0" startPos="8.04" endPos="23.04" friendlyPos="true" lines="37"/>
+    <busStop id="2908797328" name="Памятник Славы" lane="289115600#3_0" startPos="28.09" endPos="43.09" friendlyPos="true" lines="96 47 3В 77 37А 5А 90 27 49М 41 28 63 75 81 105 125"/>
+    <busStop id="2908797330" name="Хользунова" lane="289115600#1_0" startPos="87.98" endPos="102.98" friendlyPos="true" lines="96 47 3В 77 37А 5А 90 27 49М 41 28 63 75 81 105 125"/>
+    <busStop id="2911646475" name="Питомник" lane="414841236#5_0" startPos="16.25" endPos="31.25" friendlyPos="true" lines="95 69 7 5 18 29"/>
+    <busStop id="2917832671" name="Памятник Славы" lane="1370340546_0" startPos="79.16" endPos="94.16" friendlyPos="true" lines="115 47 60С 49 3 9КС 80 110 120А 49Б 64 84"/>
+    <busStop id="2926661055" name="Беговая" lane="261565232#0_0" startPos="50.00" endPos="65.00" friendlyPos="true" lines="63"/>
+    <busStop id="2926661056" name="Верещагина" lane="261565232#3_0" startPos="335.36" endPos="350.36" friendlyPos="true" lines="63"/>
+    <busStop id="2926661060" name="Солнечная" lane="289115589#0_0" startPos="39.62" endPos="54.62" friendlyPos="true" lines="63"/>
+    <busStop id="2926661068" name="303 Стрелковой Дивизии" lane="261565232#3_0" startPos="17.23" endPos="32.23" friendlyPos="true" lines="63"/>
+    <busStop id="3052536276" name="Владимира Невского (Универсам &quot;Молодёжный&quot;)" lane="37908462#1_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="49М 54 15 28 75 81"/>
+    <busStop id="3052536277" name="Владимира Невского (Универсам &quot;Молодёжный&quot;)" lane="37908464#3_0" startPos="124.79" endPos="139.79" friendlyPos="true" lines="3В 37 49М 54 15 16В 75 74"/>
+    <busStop id="3227037441" name="Больница №7" lane="28951980#0_0" startPos="65.35" endPos="80.35" friendlyPos="true" lines="96 3В 5 18 69 75"/>
+    <busStop id="3227037442" name="Больница №7" lane="866853351#1_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="96 69 5 18 75 29"/>
+    <busStop id="3227037452" name="Питомник" lane="1105958338#6_0" startPos="19.11" endPos="34.11" friendlyPos="true" lines="18 69"/>
+    <busStop id="3366023907" name="Памятник Славы" lane="287246976#0_0" startPos="68.75" endPos="83.75" friendlyPos="true" lines="96 47 99 77 37А 5А 90 27 49М 41 75 81 84 125"/>
+    <busStop id="3665704206" name="Новгородская" lane="65758492#0_0" startPos="33.18" endPos="48.18" friendlyPos="true" lines="3В 16В 63 105 74"/>
+    <busStop id="3665705637" name="Донская" lane="289115591#0_0" startPos="6.22" endPos="21.22" friendlyPos="true" lines="63"/>
+    <busStop id="4485478402" name="Шишкова" lane="981597898#0_0" startPos="27.74" endPos="42.74" friendlyPos="true" lines="96 75"/>
+    <busStop id="4485478415" name="Московский пр-т" lane="192222450#5_0" startPos="32.33" endPos="47.33" friendlyPos="true" lines="96 75"/>
+    <busStop id="4488933246" name="Карпинского" lane="414841238#4_0" startPos="14.00" endPos="29.00" friendlyPos="true" lines="96 75"/>
+    <busStop id="9089520321" name="ул. Новгородская" lane="38373347_0" startPos="16.92" endPos="31.92" friendlyPos="true" lines="63"/>
+    <busStop id="9469052117" name="Владимира Невского (Универсам &quot;Молодёжный&quot;)" lane="261657003#2_0" startPos="8.18" endPos="23.18" friendlyPos="true" lines="37"/>
+</additional>
