@@ -8,6 +8,7 @@ import random
 import sys
 import numpy as np
 from pathlib import Path
+from utils.accident_utils import AccidentManager
 
 # ----------------- Параметры -----------------
 STEP_INTERVAL = 10             # собирать метрики каждые 10 шагов
@@ -36,11 +37,11 @@ sumoCmd.append("--no-warnings")
 sumoCmd.extend(["--verbose", "false"])
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 agents_folder_path = os.path.join(
-    current_script_dir, '..', 'agents', 'total_reward_lr01_df099_epd0999_every10s')
+    current_script_dir, '..', 'agents', 'total_reward_lr01_df099_epd0999_with_accident_in_reward')
 
 
 # Выход
-OUTPUT_DIR = "metrics/total_reward_lr01_df099_epd0999_every10s"
+OUTPUT_DIR = "metrics/total_reward_lr01_df099_epd0999_with_accident_in_reward"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 network_csv_path = os.path.join(OUTPUT_DIR, "network_metrics.csv")
 tls_csv_path = os.path.join(OUTPUT_DIR, "tls_metrics.csv")
@@ -66,6 +67,16 @@ network_f, network_writer = write_csv_header(network_csv_path, network_fields)
 tls_f, tls_writer = write_csv_header(tls_csv_path, tls_fields)
 
 actions = [+20, +10, 0, -10, -20]
+
+# --- Параметры аварий ---
+
+ENABLE_ACCIDENTS = True
+ACCIDENT_MODE = "obstacle"  # "lane_block" или "obstacle"
+ACCIDENT_PROB_PER_STEP = 0.005  # вероятность за шаг (на всю сеть)
+ACCIDENT_MIN_DURATION = 100     # шаги
+ACCIDENT_MAX_DURATION = 300     # шаги
+ACCIDENT_MAX_CONCURRENT = 10     # одновременно активных аварий
+
 
 agents = {}
 controlled_edges_dict = {}
@@ -96,12 +107,43 @@ try:
     # Полосы всей сети для сетевых метрик
     all_lanes = list(traci.lane.getIDList())
     step = 0
-
+    if ENABLE_ACCIDENTS:
+        # Все полосы в сети (кроме внутренних ":")
+        all_lanes = list(traci.lane.getIDList())
+        # Используемые классы ТС — чтобы корректно закрывать полосу только для реально существующих классов
+        try:
+            vtypes = traci.vehicletype.getIDList()
+            used_vclasses = set(traci.vehicletype.getVehicleClass(t)
+                                for t in vtypes)
+        except Exception:
+            used_vclasses = set()
+        rng = random.Random(42)  # воспроизводимо
+        accident_manager = AccidentManager(
+            all_lanes,
+            used_vclasses,
+            rng=rng,
+            mode=ACCIDENT_MODE,
+            prob_per_step=ACCIDENT_PROB_PER_STEP,
+            min_duration_steps=ACCIDENT_MIN_DURATION,
+            max_duration_steps=ACCIDENT_MAX_DURATION,
+            max_concurrent=ACCIDENT_MAX_CONCURRENT,
+            min_margin_from_ends_m=10.0,
+            enable_markers=True,
+            marker_color=(255, 0, 0, 255),  # красный
+            marker_layer=10,
+            marker_size=(12, 12),
+            marker_type="ACCIDENT",
+            marker_label="ДТП",
+        )
     for step in tqdm(range(MAX_SIMULATION_STEPS)):
         last_phase_idx = {tls_id: traci.trafficlight.getPhase(
             tls_id) for tls_id in tls_ids}
         traci.simulationStep()
         sim_time = traci.simulation.getTime()
+
+        # === ТИК МЕНЕДЖЕРА АВАРИЙ ===
+        if ENABLE_ACCIDENTS and accident_manager is not None:
+            accident_manager.step(step)
 
         # События шага
         departed_ids = traci.simulation.getDepartedIDList()

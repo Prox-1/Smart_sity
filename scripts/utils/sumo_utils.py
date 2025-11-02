@@ -1,3 +1,5 @@
+from traci import constants as tc
+import random
 import traci
 
 

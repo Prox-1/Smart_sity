@@ -1,3 +1,4 @@
+from typing import Callable, Dict, List, Optional
 import os
 import traci
 import itertools
@@ -65,26 +66,49 @@ def get_metrics(controlled_edges):
     return waiting_time, halting_number
 
 
-def calculate_local_reward(controlled_edges):
+def calculate_local_reward(
+    controlled_edges: List[str],
+    *,
+    use_accident_penalty: bool = False,
+    accident_weight: float = 0.3,
+    accident_provider: Optional[Callable[[
+        List[str]], Dict[str, float]]] = None,
+):
     """
-    Рассчитывает награду для Q-learning агента на основе метрик трафика.
+    Рассчитывает локальную награду. При use_accident_penalty=True учитывает вклад ДТП.
+    - accident_provider: функция, возвращающая {edge_id: impact в [0,1]}.
+      Если не задана или ДТП отсутствуют — вклад равен 0.
     """
     reward = 0.0
-    waiting_time, halting_number = get_metrics(
-        controlled_edges)
+    waiting_time, halting_number = get_metrics(controlled_edges)
+
     num_edges_local = max(1, len(controlled_edges))
-    max_possible_local_waiting_time = MAX_WAITING_TIME_PER_EDGE * \
-        max(1, num_edges_local)
+    max_possible_local_waiting_time = MAX_WAITING_TIME_PER_EDGE * num_edges_local
     normalized_local_waiting_time = waiting_time / \
         max_possible_local_waiting_time if max_possible_local_waiting_time > 0 else 0.0
 
-    max_possible_local_queue_length = MAX_QUEUE_LENGTH_PER_EDGE * \
-        max(1, num_edges_local)
+    max_possible_local_queue_length = MAX_QUEUE_LENGTH_PER_EDGE * num_edges_local
     normalized_local_queue_length = halting_number / \
         max_possible_local_queue_length if max_possible_local_queue_length > 0 else 0.0
 
-    reward = -1.0 * normalized_local_waiting_time \
-             - 0.5 * normalized_local_queue_length
+    reward = -1.0 * normalized_local_waiting_time - \
+        0.5 * normalized_local_queue_length
+
+    # Дополнительный штраф за ДТП (опционально)
+    if use_accident_penalty and accident_provider is not None:
+        try:
+            # dict edge->impact [0..1]
+            impacts = accident_provider(controlled_edges)
+            # Средний импакт по подъездам данного светофора
+            avg_impact = 0.0
+            if impacts:
+                s = sum(impacts.get(e, 0.0) for e in controlled_edges)
+                avg_impact = s / float(num_edges_local)
+            # Наказание за аварии (нормировано и масштабируется весом)
+            reward -= float(accident_weight) * float(avg_impact)
+        except Exception:
+            # В случае любых проблем со сторонним провайдером — игнорируем вклад ДТП
+            pass
 
     return reward
 
