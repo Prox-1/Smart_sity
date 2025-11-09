@@ -1,3 +1,8 @@
+from threading import Thread
+from flask import Flask, request, jsonify
+from typing import Optional
+from dataclasses import dataclass
+import queue
 from utils.test_utils import *
 from utils.accident_utils import AccidentManager
 from tqdm import tqdm
@@ -11,8 +16,7 @@ import numpy as np
 from pathlib import Path
 
 # ----------------- Параметры -----------------
-STEP_INTERVAL = 10             # собирать метрики каждые 10 шагов
-MAX_SIMULATION_STEPS = 3600
+MAX_SIMULATION_STEPS = 10000
 
 # SUMO
 os.environ["PYTHONHASHSEED"] = "0"
@@ -39,20 +43,149 @@ current_script_dir = os.path.dirname(os.path.abspath(__file__))
 agents_folder_path = os.path.join(
     current_script_dir, '..', 'agents', 'total_reward_lr01_df099_epd0999_every10s')
 
-print("Starting SUMO simulation and metrics sampling every",
-      STEP_INTERVAL, "steps...")
-
 actions = [+20, +10, 0, -10, -20]
 
 # --- Параметры аварий ---
 
 ENABLE_ACCIDENTS = True
 ACCIDENT_MODE = "obstacle"  # "lane_block" или "obstacle"
-ACCIDENT_PROB_PER_STEP = 0.9  # вероятность за шаг (на всю сеть)
+ACCIDENT_PROB_PER_STEP = 0.0  # вероятность за шаг (на всю сеть)
 ACCIDENT_MIN_DURATION = 100     # шаги
 ACCIDENT_MAX_DURATION = 300     # шаги
 ACCIDENT_MAX_CONCURRENT = 3     # одновременно активных аварий
 
+# --- HTTP ---
+# start_sim_gui.py (добавь рядом с командной очередью)
+
+
+def start_http_api(command_queue, host="127.0.0.1", port=8081):
+    app = Flask(__name__)
+
+    @app.route("/api/spawn_lane", methods=["POST"])
+    def api_spawn_lane():
+        data = request.get_json(force=True)
+        lane_id = data.get("lane_id")
+        pos_m = data.get("pos_m")
+        duration_steps = data.get("duration_steps")
+        mode = data.get("mode")
+        ignore_max_concurrent = bool(data.get("ignore_max_concurrent", False))
+        if not lane_id:
+            return jsonify({"ok": False, "error": "lane_id required"}), 400
+        command_queue.put(SpawnCmd(lane_id=lane_id, pos_m=pos_m, duration_steps=duration_steps,
+                          mode=mode, ignore_max_concurrent=ignore_max_concurrent))
+        return jsonify({"ok": True})
+
+    @app.route("/api/spawn_geo", methods=["POST"])
+    def api_spawn_geo():
+        data = request.get_json(force=True)
+        lon = data.get("lon")
+        lat = data.get("lat")
+        duration_steps = data.get("duration_steps")
+        mode = data.get("mode")
+        if lon is None or lat is None:
+            return jsonify({"ok": False, "error": "lon and lat required"}), 400
+        command_queue.put(SpawnCmd(lon=float(lon), lat=float(
+            lat), duration_steps=duration_steps, mode=mode))
+        return jsonify({"ok": True})
+
+    @app.route("/api/clear_lane", methods=["POST"])
+    def api_clear_lane():
+        data = request.get_json(force=True)
+        lane_id = data.get("lane_id")
+        if not lane_id:
+            return jsonify({"ok": False, "error": "lane_id required"}), 400
+        command_queue.put(ClearCmd(lane_id=lane_id))
+        return jsonify({"ok": True})
+
+    @app.route("/api/clear_all", methods=["POST"])
+    def api_clear_all():
+        command_queue.put(ClearCmd(lane_id=None))
+        return jsonify({"ok": True})
+
+    @app.route("/api/health", methods=["GET"])
+    def api_health():
+        return jsonify({"ok": True})
+
+    # запуск в отдельном потоке
+    t = Thread(target=lambda: app.run(host=host, port=port,
+               debug=False, use_reloader=False, threaded=True), daemon=True)
+    t.start()
+    print(f"[HTTP] API started at http://{host}:{port}")
+
+
+# --- Очередь ---
+
+command_queue = queue.Queue()
+
+
+@dataclass
+class SpawnCmd:
+    # либо geo, либо lane_id/pos
+    lon: Optional[float] = None
+    lat: Optional[float] = None
+    lane_id: Optional[str] = None
+    pos_m: Optional[float] = None
+    duration_steps: Optional[int] = None
+    mode: Optional[str] = None
+    ignore_max_concurrent: bool = False
+
+
+@dataclass
+class ClearCmd:
+    lane_id: Optional[str] = None   # None => clear_all
+
+
+def process_commands(accident_manager: AccidentManager):
+    while True:
+        try:
+            cmd = command_queue.get_nowait()
+        except queue.Empty:
+            break
+
+        if isinstance(cmd, SpawnCmd):
+            try:
+                if cmd.lane_id is None and cmd.lon is not None and cmd.lat is not None:
+                    # Конвертируем geo -> дорога
+                    edge_id, lane_pos, lane_index = traci.simulation.convertRoad(
+                        cmd.lon, cmd.lat, isGeo=True)
+                    lane_id = f"{edge_id}_{lane_index}"
+                    pos_m = float(lane_pos) if cmd.pos_m is None else cmd.pos_m
+                else:
+                    lane_id = cmd.lane_id
+                    pos_m = cmd.pos_m
+
+                if lane_id is None:
+                    print("SpawnCmd: no lane resolved")
+                    continue
+
+                acc = accident_manager.create_accident_at(
+                    lane_id=lane_id,
+                    duration_steps=cmd.duration_steps,
+                    pos_m=pos_m,
+                    mode=cmd.mode,
+                    ignore_max_concurrent=cmd.ignore_max_concurrent
+                )
+                if acc:
+                    print(
+                        f"[BOT] Accident created at {lane_id} pos={pos_m} mode={cmd.mode}")
+                else:
+                    print(f"[BOT] Failed to create accident at {lane_id}")
+            except Exception as e:
+                print(f"[BOT] spawn error: {e}")
+
+        elif isinstance(cmd, ClearCmd):
+            try:
+                if cmd.lane_id:
+                    ok = accident_manager.clear_accident(cmd.lane_id)
+                    print(f"[BOT] clear {cmd.lane_id}: {ok}")
+                else:
+                    n = accident_manager.clear_all()
+                    print(f"[BOT] clear_all: {n}")
+            except Exception as e:
+                print(f"[BOT] clear error: {e}")
+
+
+start_http_api(command_queue, host="127.0.0.1", port=8081)
 
 agents = {}
 controlled_edges_dict = {}
@@ -110,13 +243,16 @@ try:
             marker_label="ДТП",
         )
     for step in tqdm(range(MAX_SIMULATION_STEPS)):
+        # обработаем команды от бота
+        if ENABLE_ACCIDENTS and accident_manager is not None:
+            process_commands(accident_manager)
+
         last_phase_idx = {tls_id: traci.trafficlight.getPhase(
             tls_id) for tls_id in tls_ids}
-        # Двигаем симуляцию на 1 шаг
         traci.simulationStep()
         sim_time = traci.simulation.getTime()
 
-        # === ТИК МЕНЕДЖЕРА АВАРИЙ ===
+        # закрытие истёкших аварий (без случайных спавнов, если prob_per_step=0.0)
         if ENABLE_ACCIDENTS and accident_manager is not None:
             accident_manager.step(step)
 

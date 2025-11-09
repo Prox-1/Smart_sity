@@ -111,7 +111,7 @@ try:
             last_states[tls_id] = q_learning.create_state_for_tls(
                 tls_id, controlled_edges_dict[tls_id])
 
-        for current_step in tqdm(range(MAX_SIMULATION_STEPS)):
+        for current_step in range(MAX_SIMULATION_STEPS):
             last_phase_idx = {tls_id: traci.trafficlight.getPhase(
                 tls_id) for tls_id in tls_ids}
             traci.simulationStep()
@@ -125,7 +125,7 @@ try:
                 tls_ids, controlled_edges_dict, unique_edges_count)
             for tls_id in tls_ids:
                 local_reward = q_learning.calculate_local_reward(
-                    controlled_edges,
+                    controlled_edges_dict[tls_id],
                     use_accident_penalty=True,
                     accident_weight=0.35,
                     accident_provider=lambda edges: accident_manager.get_edge_impacts(

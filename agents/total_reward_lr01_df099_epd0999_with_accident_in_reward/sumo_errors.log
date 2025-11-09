@@ -1,0 +1,4 @@
+Warning: Teleporting vehicle 'veh167'; waited too long (jam), lane=':cluster_2953681332_317600238_4159783703_528219373_14_0', time=712.00.
+Warning: Vehicle 'veh167' ends teleporting on edge '414841234', time=712.00.
+Warning: Teleporting vehicle 'veh174'; waited too long (yield), lane='-981597898#0_0', time=743.00.
+Warning: Vehicle 'veh174' ends teleporting on edge '981597898#0', time=746.00.
