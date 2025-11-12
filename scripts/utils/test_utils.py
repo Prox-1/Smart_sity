@@ -1,5 +1,5 @@
-import traci
-import os
+import libsumo as traci
+USING_LIBSUMO = True
 import csv
 
 

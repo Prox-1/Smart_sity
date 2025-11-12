@@ -2,7 +2,7 @@ from utils.test_utils import *
 from tqdm import tqdm
 import csv
 from utils import q_learning, sumo_utils
-import traci
+import libsumo as traci
 import os
 import random
 import sys
@@ -10,6 +10,7 @@ import numpy as np
 from pathlib import Path
 from utils.accident_utils import AccidentManager
 
+USING_LIBSUMO = True
 # ----------------- Параметры -----------------
 STEP_INTERVAL = 10             # собирать метрики каждые 10 шагов
 MAX_SIMULATION_STEPS = 3600
@@ -37,11 +38,11 @@ sumoCmd.append("--no-warnings")
 sumoCmd.extend(["--verbose", "false"])
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 agents_folder_path = os.path.join(
-    current_script_dir, '..', 'agents', 'total_reward_lr01_df099_epd0999_with_accident_in_reward')
+    current_script_dir, '..', 'agents', 'total_reward_lr01_df099_epd0999_30_20_10_0_100eps_7200steps(l_reward_ 1.5 1 0.5 g_reward_ 1 0.7 0.3)')
 
 
 # Выход
-OUTPUT_DIR = "metrics/total_reward_lr01_df099_epd0999_with_accident_in_reward"
+OUTPUT_DIR = "metrics/total_reward_lr01_df099_epd0999_30_20_10_0_100eps_7200steps(l_reward_ 1.5 1 0.5 g_reward_ 1 0.7 0.3)"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 network_csv_path = os.path.join(OUTPUT_DIR, "network_metrics.csv")
 tls_csv_path = os.path.join(OUTPUT_DIR, "tls_metrics.csv")

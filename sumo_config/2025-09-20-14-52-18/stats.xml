@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-11-09 12:05:48 by Eclipse SUMO sumo Version 1.24.0
-<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+<!-- generated on 2025-11-12 16:38:32 by Eclipse SUMO libsumo Version 1.24.0
+<libsumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/libsumoConfiguration.xsd">
 
     <input>
-        <net-file value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.net.xml.gz"/>
-        <route-files value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm_pt.rou.xml,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.bus.trips.xml,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.passenger.trips.xml"/>
-        <additional-files value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.poly.xml.gz,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm_stops.add.xml,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\output.add.xml"/>
+        <net-file value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.net.xml.gz"/>
+        <route-files value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm_pt.rou.xml,C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.bus.trips.xml,C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.passenger.trips.xml"/>
+        <additional-files value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.poly.xml.gz,C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm_stops.add.xml,C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\output.add.xml"/>
     </input>
 
     <output>
-        <tripinfo-output value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\tripinfos.xml"/>
-        <stop-output value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\stopinfos.xml"/>
-        <statistic-output value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\stats.xml"/>
+        <tripinfo-output value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\tripinfos.xml"/>
+        <stop-output value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\stopinfos.xml"/>
+        <statistic-output value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\stats.xml"/>
     </output>
 
     <processing>
@@ -26,30 +26,31 @@
     </routing>
 
     <report>
-        <verbose value="true"/>
+        <verbose value="false"/>
         <no-warnings value="true"/>
-        <log value="c:\Users\kurga\workspace\sity_sim\scripts\..\agents\total_reward_lr01_df099_epd0999_with_accident_in_reward\sumo.log"/>
-        <error-log value="c:\Users\kurga\workspace\sity_sim\scripts\..\agents\total_reward_lr01_df099_epd0999_with_accident_in_reward\sumo_errors.log"/>
-        <duration-log.disable value="false"/>
         <duration-log.statistics value="true"/>
         <no-step-log value="true"/>
     </report>
 
+    <random_number>
+        <seed value="42"/>
+    </random_number>
+
     <gui_only>
-        <gui-settings-file value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.view.xml"/>
+        <gui-settings-file value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.view.xml"/>
     </gui_only>
 
-</sumoConfiguration>
+</libsumoConfiguration>
 -->
 
 <statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
-    <performance clockBegin="267399.36" clockEnd="267409.56" clockDuration="10.20" traciDuration="7.67" realTimeFactor="74.62" vehicleUpdatesPerSecond="11378.17" personUpdatesPerSecond="0.00" begin="0.00" end="761.00" duration="761.00"/>
-    <vehicles loaded="575" inserted="543" running="218" waiting="3"/>
-    <teleports total="2" jam="1" yield="1" wrongLane="0"/>
-    <safety collisions="0" emergencyStops="0" emergencyBraking="0"/>
+    <performance clockBegin="160845.00" clockEnd="160863.33" clockDuration="18.33" traciDuration="6.53" realTimeFactor="196.38" vehicleUpdatesPerSecond="42681.60" personUpdatesPerSecond="0.00" begin="0.00" end="3600.00" duration="3600.00"/>
+    <vehicles loaded="2565" inserted="2541" running="269" waiting="23"/>
+    <teleports total="29" jam="9" yield="13" wrongLane="7"/>
+    <safety collisions="0" emergencyStops="0" emergencyBraking="1"/>
     <persons loaded="0" running="0" jammed="0"/>
     <personTeleports total="0" abortWait="0" wrongDest="0"/>
-    <vehicleTripStatistics count="325" routeLength="2050.57" speed="9.73" duration="221.81" waitingTime="41.50" timeLoss="80.74" departDelay="0.64" departDelayWaiting="-1.00" totalTravelTime="72090.00" totalDepartDelay="208.06"/>
+    <vehicleTripStatistics count="2272" routeLength="2349.45" speed="9.39" duration="299.80" waitingTime="70.14" timeLoss="127.77" departDelay="4.42" departDelayWaiting="-1.00" totalTravelTime="681147.00" totalDepartDelay="10049.22"/>
     <pedestrianStatistics number="0" routeLength="0.00" duration="0.00" timeLoss="0.00"/>
     <rideStatistics number="0"/>
     <transportStatistics number="0"/>

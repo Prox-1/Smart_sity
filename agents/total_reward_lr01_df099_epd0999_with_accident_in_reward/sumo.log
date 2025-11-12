@@ -1,30 +1,26 @@
-Loading net-file from 'C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.net.xml.gz' ... done (395ms).
-Loading additional-files from 'C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.poly.xml.gz' ... done (180ms).
-Loading additional-files from 'C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm_stops.add.xml' ... done (12ms).
-Loading additional-files from 'C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\output.add.xml' ... done (15ms).
-Loading route-files incrementally from 'C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm_pt.rou.xml'
-Loading route-files incrementally from 'C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.bus.trips.xml'
-Loading route-files incrementally from 'C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.passenger.trips.xml'
+Loading net-file from 'C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.net.xml.gz' ... done (441ms).
+Loading additional-files from 'C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.poly.xml.gz' ... done (27ms).
+Loading additional-files from 'C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm_stops.add.xml' ... done (11ms).
+Loading additional-files from 'C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\output.add.xml' ... done (15ms).
+Loading route-files incrementally from 'C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm_pt.rou.xml'
+Loading route-files incrementally from 'C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.bus.trips.xml'
+Loading route-files incrementally from 'C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.passenger.trips.xml'
 Loading done.
-Simulation version 1.24.0 started with time: 0.00.
-Simulation ended at time: 761.00.
-Reason: TraCI requested termination.
+Simulation version 1.24.0 started via libsumo with time: 0.00.
+Simulation ended at time: 0.00.
+Reason: Libsumo requested termination.
 Performance:
- Duration: 10.20s
- TraCI-Duration: 7.67s
- Real time factor: 74.6152
- UPS: 11378.174331
+ Duration: 0.14s
+ Real time factor: 0
+ UPS: 0.000000
 Vehicles:
- Inserted: 543 (Loaded: 575)
- Running: 218
- Waiting: 3
- Teleports: 2 (Jam: 1, Yield: 1)
-Statistics (avg of 325):
- RouteLength: 2050.57
- Speed: 9.73
- Duration: 221.81
- WaitingTime: 41.50
- TimeLoss: 80.74
- DepartDelay: 0.64
-DijkstraRouter answered 444 queries and explored 458.12 edges on average.
-DijkstraRouter spent 0.24s answering queries (0.53ms on average).
+ Inserted: 0 (Loaded: 4)
+ Running: 0
+ Waiting: 0
+Statistics (avg of 0):
+ RouteLength: 0.00
+ Speed: 0.00
+ Duration: 0.00
+ WaitingTime: 0.00
+ TimeLoss: 0.00
+ DepartDelay: 0.00

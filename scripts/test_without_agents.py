@@ -3,12 +3,13 @@ import sys
 import csv
 import random
 import numpy as np
-import traci
+import libsumo as traci
 from tqdm import tqdm
 from pathlib import Path
 from utils.test_utils import *
 from utils.accident_utils import AccidentManager
 
+USING_LIBSUMO = True
 # ----------------- Параметры -----------------
 STEP_INTERVAL = 10             # собирать метрики каждые 10 шагов
 MAX_SIMULATION_STEPS = 3600

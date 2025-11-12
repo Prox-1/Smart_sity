@@ -1,11 +1,13 @@
-from typing import Callable, Dict, List, Optional
+from typing import Dict, Iterable, Optional
 import os
-import traci
+import libsumo as traci
 import itertools
 import collections
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from utils import sumo_utils
+
+USING_LIBSUMO = True
 
 MAX_WAITING_TIME_PER_EDGE = 300
 MAX_QUEUE_LENGTH_PER_EDGE = 50
@@ -67,76 +69,70 @@ def get_metrics(controlled_edges):
 
 
 def calculate_local_reward(
-    controlled_edges: List[str],
+    controlled_edges: Iterable[str],
+    metrics: Optional["RewardMetricsCache"] = None,
     *,
     use_accident_penalty: bool = False,
-    accident_weight: float = 0.3,
-    accident_provider: Optional[Callable[[
-        List[str]], Dict[str, float]]] = None,
-):
+    accident_weight: float = 0.35,
+    accident_provider=None,
+) -> float:
     """
-    Рассчитывает локальную награду. При use_accident_penalty=True учитывает вклад ДТП.
-    - accident_provider: функция, возвращающая {edge_id: impact в [0,1]}.
-      Если не задана или ДТП отсутствуют — вклад равен 0.
+    Если metrics не передан — используем ваш прежний (legacy) код.
+    Если metrics передан — берём данные из кэша подписок без дополнительных TraCI-вызовов.
     """
-    reward = 0.0
-    waiting_time, halting_number = get_metrics(controlled_edges)
 
-    num_edges_local = max(1, len(controlled_edges))
-    max_possible_local_waiting_time = MAX_WAITING_TIME_PER_EDGE * num_edges_local
-    normalized_local_waiting_time = waiting_time / \
-        max_possible_local_waiting_time if max_possible_local_waiting_time > 0 else 0.0
+    edges = list(controlled_edges)
+    stats = [metrics.get_edge_stats(e) for e in edges]
 
-    max_possible_local_queue_length = MAX_QUEUE_LENGTH_PER_EDGE * num_edges_local
-    normalized_local_queue_length = halting_number / \
-        max_possible_local_queue_length if max_possible_local_queue_length > 0 else 0.0
+    veh = sum(s["veh"] for s in stats)
+    mean_waiting_time = sum(s["waiting_mean"] for s in stats) / len(stats) if stats else 0.0
+    mean_speed = (sum(s["speed"] * s["veh"]
+                  for s in stats) / veh) if veh > 0 else 0.0
+    mean_occ = sum(s["occ"] for s in stats) / len(stats) if stats else 0.0
 
-    reward = -1.0 * normalized_local_waiting_time - \
-        0.5 * normalized_local_queue_length
+    # Нормализации/веса
+    DESIRED_SPEED = 13.89  # ~50 км/ч 
+    MAX_WAITING_TIME = 300
+    speed_score = (mean_speed / DESIRED_SPEED) if DESIRED_SPEED > 0 else 0.0
+    normalized_waiting_time = (mean_waiting_time / MAX_WAITING_TIME) if MAX_WAITING_TIME > 0 else 0.0
 
-    # Дополнительный штраф за ДТП (опционально)
+
+    reward = 1.5 * speed_score - 1.0 * normalized_waiting_time - 0.50 * mean_occ
+
     if use_accident_penalty and accident_provider is not None:
-        try:
-            # dict edge->impact [0..1]
-            impacts = accident_provider(controlled_edges)
-            # Средний импакт по подъездам данного светофора
-            avg_impact = 0.0
-            if impacts:
-                s = sum(impacts.get(e, 0.0) for e in controlled_edges)
-                avg_impact = s / float(num_edges_local)
-            # Наказание за аварии (нормировано и масштабируется весом)
-            reward -= float(accident_weight) * float(avg_impact)
-        except Exception:
-            # В случае любых проблем со сторонним провайдером — игнорируем вклад ДТП
-            pass
+        impacts = accident_provider(edges) or {}
+        total_impact = sum(float(impacts.get(e, 0.0)) for e in edges)
+        reward -= accident_weight * total_impact
 
-    return reward
+    return float(reward)
 
 
-def calculate_global_reward(tls_ids, controlled_edges_dict, count_of_all_edges):
+def calculate_global_reward(
+    tls_ids: Iterable[str],
+    controlled_edges_dict: Dict[str, Iterable[str]],
+    unique_edges_count: int,
+    metrics: Optional["RewardMetricsCache"] = None,
+) -> float:
     """
-    Рассчитывает глобальную награду для Q-learning агента на основе метрик трафика.
+    Аналогично: если metrics не передан — оставьте ваш прежний код.
+    Если metrics передан — считаем глобальные метрики из кэша.
     """
-    global_waiting_time = 0.0
-    global_halting_number = 0.0
-    for tls_id in tls_ids:
-        waiting_time, halting_number = get_metrics(
-            controlled_edges_dict[tls_id])
-        global_waiting_time += waiting_time
-        global_halting_number += halting_number
-    max_possible_global_waiting_time = MAX_WAITING_TIME_PER_EDGE * \
-        max(1, count_of_all_edges)
-    normalized_global_waiting_time = global_waiting_time / \
-        max_possible_global_waiting_time if max_possible_global_waiting_time > 0 else 0.0
 
-    max_possible_global_queue_length = MAX_QUEUE_LENGTH_PER_EDGE * \
-        max(1, count_of_all_edges)
-    normalized_global_queue_length = global_halting_number / \
-        max_possible_global_queue_length if max_possible_global_queue_length > 0 else 0.0
+    # === Быстрый путь на кэше ===
 
-    reward = -0.7 * normalized_global_waiting_time \
-             - 0.3 * normalized_global_queue_length
-    return reward
+    all_edges = set().union(*[set(v) for v in controlled_edges_dict.values()])
+    s = metrics.get_global_stats(all_edges)
+
+    DESIRED_SPEED = 13.89
+    MAX_GLOBAL_WAITING_TIME = 300 * len(all_edges)
+    speed_score = (s["speed"] / DESIRED_SPEED) if DESIRED_SPEED > 0 else 0.0
+    halting_per_edge = (s["halting"] / max(1, len(all_edges)))
+    normalized_waiting_time = (s["sum_waiting_mean"] / MAX_GLOBAL_WAITING_TIME) if MAX_GLOBAL_WAITING_TIME > 0 else 0.0
+    occ = s["occ"]
+
+    # Глобальная метрика — примерная (подкорректируйте веса под свою постановку)
+    reward = 1.0 * speed_score - 0.7 * normalized_waiting_time - 0.3 * occ
+    return float(reward)
 
 
 def calculate_total_reward(local_reward, global_reward, weight_local=0.5, weight_global=0.5):

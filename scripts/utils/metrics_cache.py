@@ -69,7 +69,13 @@ class RewardMetricsCache:
     и делает безопасные fallback'и на прямые геттеры при отсутствии констант.
     """
 
-    def __init__(self, traci_module, edges: Iterable[str], all_lanes: Iterable[str]) -> None:
+    def __init__(self, traci_module, edges: Iterable[str], all_lanes: Iterable[str],
+                waiting_cache_enabled: bool = True,        # включить кэш среднего waiting time
+                waiting_cache_period: int = 5,             # пересчитывать каждые N шагов
+                waiting_accumulated: bool = False,         # использовать накопленный waiting?
+                waiting_among_waiting_only: bool = True,   # среднее только по тем, у кого wt>0
+
+    ) -> None:
         self.traci = traci_module
         self.edges: set[str] = set(edges)
 
@@ -114,7 +120,83 @@ class RewardMetricsCache:
         self._edge_stats: Dict[str, Dict[str, Numeric]] = {}
         self._subscribed = False
 
+        self._waiting_cache_enabled = bool(waiting_cache_enabled)
+        self._waiting_cache_period = max(1, int(waiting_cache_period))
+        self._waiting_accumulated = bool(waiting_accumulated)
+        self._waiting_among_waiting_only = bool(waiting_among_waiting_only)
+        self._waiting_cache: Dict[str, float] = {}
+        self._step_counter = 0
     # Подписки
+
+    def _compute_edge_waiting_mean_now(self, edge_id: str) -> float:
+        """
+        Немедленно вычисляет средний waiting time по ребру edge_id (в секундах)
+        по текущему шагу симуляции (по всем полосам ребра).
+        """
+        lanes = self.edge_lanes.get(edge_id, [])
+        total = 0.0
+        cnt = 0
+
+        for lane in lanes:
+            try:
+                veh_ids = list(self.traci.lane.getLastStepVehicleIDs(lane) or [])
+            except Exception:
+                veh_ids = []
+
+            for vid in veh_ids:
+                wt = 0.0
+                try:
+                    if self._waiting_accumulated:
+                        wt = float(self.traci.vehicle.getAccumulatedWaitingTime(vid))
+                    else:
+                        wt = float(self.traci.vehicle.getWaitingTime(vid))
+                except Exception:
+                    # альтернативный геттер на случай частичной совместимости
+                    try:
+                        if self._waiting_accumulated:
+                            wt = float(self.traci.vehicle.getWaitingTime(vid))
+                        else:
+                            wt = float(self.traci.vehicle.getAccumulatedWaitingTime(vid))
+                    except Exception:
+                        wt = 0.0
+
+                if self._waiting_among_waiting_only:
+                    if wt > 0.0:
+                        total += wt
+                        cnt += 1
+                else:
+                    total += wt
+                    cnt += 1
+
+        return (total / cnt) if cnt else 0.0
+
+    def refresh_waiting_cache(self, edges: Optional[Iterable[str]] = None) -> None:
+        """
+        Принудительно пересчитать и обновить кэш среднего waiting по переданным рёбрам.
+        Если edges=None — пересчитываем для всех известных рёбер.
+        """
+        if not self._waiting_cache_enabled:
+            return
+        if edges is None:
+            edges = self.edge_lanes.keys()
+        for e in edges:
+            try:
+                self._waiting_cache[e] = self._compute_edge_waiting_mean_now(e)
+            except Exception:
+                # глушим любые ошибки, оставляя предыдущее значение кэша
+                continue
+
+    def get_edge_waiting_mean(self, edge_id: str) -> float:
+        """
+        Возвращает закэшированное среднее waiting time по ребру.
+        Если в кэше нет — вычисляет лениво и сохраняет.
+        """
+        if not self._waiting_cache_enabled:
+            # если кэш выключен — считаем на лету
+            return self._compute_edge_waiting_mean_now(edge_id)
+        if edge_id not in self._waiting_cache:
+            self._waiting_cache[edge_id] = self._compute_edge_waiting_mean_now(edge_id)
+        return float(self._waiting_cache.get(edge_id, 0.0))
 
     def subscribe_all(self) -> None:
         if self._subscribed:
@@ -147,6 +229,8 @@ class RewardMetricsCache:
         """
         if not self._subscribed:
             self.subscribe_all()
+        
+        self._step_counter += 1
 
         self._clear_step_cache()
 
@@ -186,7 +270,6 @@ class RewardMetricsCache:
             else:
                 # Самый дешёвый эвристический fallback (если ничего нет):
                 # считаем, что если средняя скорость почти нулевая, то все "veh" — halting.
-                # Это грубо, но без лишних вызовов.
                 halt = veh if spd < 0.1 else 0
 
             self._lane_stats[lane_id] = {
@@ -195,6 +278,12 @@ class RewardMetricsCache:
                 "halting": halt,
                 "occ": occ,
             }
+
+        if self._waiting_cache_enabled and (self._step_counter % self._waiting_cache_period == 0):
+            try:
+                self.refresh_waiting_cache()
+            except Exception:
+                pass  # безопасно игнорируем
 
         # edge-агрегаты
         for edge, lanes in self.edge_lanes.items():
@@ -222,13 +311,16 @@ class RewardMetricsCache:
                 "halting": halt_sum,
                 "speed": (speed_den and (speed_num / speed_den)) or 0.0,
                 "occ": (occ_cnt and (occ_sum / occ_cnt)) or 0.0,
+                "waiting_mean": float(self._waiting_cache.get(edge, 0.0)) if self._waiting_cache_enabled
+                                 else self._compute_edge_waiting_mean_now(edge),
             }
 
     # Доступ к метрикам
 
     def get_edge_stats(self, edge_id: str) -> Dict[str, Numeric]:
-        # Возвращаем нули, если нет данных (например, до первого simulationStep)
-        return self._edge_stats.get(edge_id, {"veh": 0, "halting": 0, "speed": 0.0, "occ": 0.0})
+        return self._edge_stats.get(edge_id, {
+            "veh": 0, "halting": 0, "speed": 0.0, "occ": 0.0, "waiting_mean": 0.0
+        })
 
     def get_global_stats(self, edges: Optional[Iterable[str]] = None) -> Dict[str, Numeric]:
         if edges is None:
@@ -240,6 +332,7 @@ class RewardMetricsCache:
         speed_den = 0
         occ_sum = 0.0
         occ_cnt = 0
+        sum_waiting_mean = 0
 
         for e in edges:
             s = self._edge_stats.get(e)
@@ -250,6 +343,7 @@ class RewardMetricsCache:
             if s["veh"] > 0:
                 speed_num += float(s["speed"]) * int(s["veh"])
                 speed_den += int(s["veh"])
+            sum_waiting_mean += float(s["waiting_mean"])
             occ_sum += float(s["occ"])
             occ_cnt += 1
 
@@ -258,4 +352,5 @@ class RewardMetricsCache:
             "halting": halt_sum,
             "speed": (speed_den and (speed_num / speed_den)) or 0.0,
             "occ": (occ_cnt and (occ_sum / occ_cnt)) or 0.0,
+            "sum_waiting_mean": sum_waiting_mean,
         }

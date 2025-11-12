@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Set, Tuple
 import random
 
-import traci
-from traci import constants as tc  # noqa: F401
+import libsumo as traci
+USING_LIBSUMO = True
 
 
 @dataclass

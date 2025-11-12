@@ -1,6 +1,6 @@
-from traci import constants as tc
-import random
-import traci
+import libsumo as traci
+USING_LIBSUMO = True
+
 
 
 def get_all_tls_phases(tls_id):
