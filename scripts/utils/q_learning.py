@@ -97,7 +97,7 @@ def calculate_local_reward(
     normalized_waiting_time = (mean_waiting_time / MAX_WAITING_TIME) if MAX_WAITING_TIME > 0 else 0.0
 
 
-    reward = 1.5 * speed_score - 1.0 * normalized_waiting_time - 0.50 * mean_occ
+    reward = 1.5 * speed_score - 1.2 * normalized_waiting_time - 0.70 * mean_occ
 
     if use_accident_penalty and accident_provider is not None:
         impacts = accident_provider(edges) or {}
@@ -131,7 +131,7 @@ def calculate_global_reward(
     occ = s["occ"]
 
     # Глобальная метрика — примерная (подкорректируйте веса под свою постановку)
-    reward = 1.0 * speed_score - 0.7 * normalized_waiting_time - 0.3 * occ
+    reward = 1.0 * speed_score - 1.0 * normalized_waiting_time - 0.5 * occ
     return float(reward)
 
 

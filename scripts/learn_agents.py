@@ -30,7 +30,7 @@ sumoConfig = str(candidate_cfg)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 output_base_dir = os.path.join(
-    script_dir, "..", "agents", "total_reward_lr01_df099_epd0999_30_20_10_0_100eps_7200steps(l_reward_ 1.5 1 0.5 g_reward_ 1 0.7 0.3)")
+    script_dir, "..", "agents", "total_reward_lr01_df099_epd0999_30_20_10_0_100eps_7200steps(l_reward_ 1.5 1.2 0.7 g_reward_ 1 1.0 0.5)")
 os.makedirs(output_base_dir, exist_ok=True)
 
 sumoCmd = [sumoBinary, "-c", sumoConfig, "--no-warnings",
