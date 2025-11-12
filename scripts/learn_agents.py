@@ -30,7 +30,7 @@ sumoConfig = str(candidate_cfg)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 output_base_dir = os.path.join(
-    script_dir, "..", "agents", "total_reward_lr01_df099_epd0999_30_20_10_0_100eps_7200steps(l_reward_ 1.5 1.2 0.7 g_reward_ 1 1.0 0.5)")
+    script_dir, "..", "agents", "test_speed")
 os.makedirs(output_base_dir, exist_ok=True)
 
 sumoCmd = [sumoBinary, "-c", sumoConfig, "--no-warnings",
@@ -42,9 +42,9 @@ sumoCmd = [sumoBinary, "-c", sumoConfig, "--no-warnings",
 actions = [+30, +20, +10, 0, -10, -20, -30]
 
 # --- Параметры аварий ---
-ENABLE_ACCIDENTS = False
+ENABLE_ACCIDENTS = True
 ACCIDENT_MODE = "obstacle"  # "lane_block" или "obstacle"
-ACCIDENT_PROB_PER_STEP = 0.001  # вероятность за шаг (на всю сеть)
+ACCIDENT_PROB_PER_STEP = 0.01  # вероятность за шаг (на всю сеть)
 ACCIDENT_MIN_DURATION = 100     # шаги
 ACCIDENT_MAX_DURATION = 300     # шаги
 ACCIDENT_MAX_CONCURRENT = 20    # одновременно активных аварий

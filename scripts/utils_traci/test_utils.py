@@ -1,7 +1,5 @@
-import libsumo as traci
+import traci
 import csv
-
-USING_LIBSUMO = True
 
 def write_csv_header(path, fields):
     """

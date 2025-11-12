@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-11-05 21:02:38 by Eclipse SUMO sumo Version 1.24.0
-<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+<!-- generated on 2025-11-12 22:40:39 by Eclipse SUMO libsumo Version 1.24.0
+<libsumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/libsumoConfiguration.xsd">
 
     <input>
-        <net-file value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.net.xml.gz"/>
-        <route-files value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm_pt.rou.xml,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.bus.trips.xml,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.passenger.trips.xml"/>
-        <additional-files value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.poly.xml.gz,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm_stops.add.xml,C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\output.add.xml"/>
+        <net-file value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.net.xml.gz"/>
+        <route-files value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm_pt.rou.xml,C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.bus.trips.xml,C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.passenger.trips.xml"/>
+        <additional-files value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.poly.xml.gz,C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm_stops.add.xml,C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\output.add.xml"/>
     </input>
 
     <output>
-        <tripinfo-output value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\tripinfos.xml"/>
-        <stop-output value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\stopinfos.xml"/>
-        <statistic-output value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\stats.xml"/>
+        <tripinfo-output value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\tripinfos.xml"/>
+        <stop-output value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\stopinfos.xml"/>
+        <statistic-output value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\stats.xml"/>
     </output>
 
     <processing>
         <ignore-route-errors value="true"/>
-        <time-to-teleport value="300"/>
         <tls.actuated.jam-threshold value="30"/>
     </processing>
 
@@ -29,20 +28,15 @@
     <report>
         <verbose value="false"/>
         <no-warnings value="true"/>
-        <duration-log.disable value="true"/>
         <duration-log.statistics value="true"/>
         <no-step-log value="true"/>
     </report>
 
-    <traci_server>
-        <remote-port value="52514"/>
-    </traci_server>
-
     <gui_only>
-        <gui-settings-file value="C:\Users\kurga\workspace\sity_sim\sumo_config\2025-09-20-14-52-18\osm.view.xml"/>
+        <gui-settings-file value="C:\Users\kurganov\workspace\Smart_city\sumo_config\2025-09-20-14-52-18\osm.view.xml"/>
     </gui_only>
 
-</sumoConfiguration>
+</libsumoConfiguration>
 -->
 
 <snapshot type="micro" version="1.24.0" time="0.00" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/state_file.xsd">

@@ -1,13 +1,12 @@
 import os
-import libsumo as traci
+import traci
 import itertools
 import collections
 import numpy as np
 
 from typing import Dict, Iterable, Optional
-from utils import sumo_utils
+from utils_traci import sumo_utils
 
-USING_LIBSUMO = True
 
 MAX_WAITING_TIME_PER_EDGE = 300
 

@@ -5,8 +5,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Set, Tuple
 import random
 
-import libsumo as traci
-USING_LIBSUMO = True
+import traci
 
 @dataclass
 class Accident:
@@ -496,7 +495,6 @@ class AccidentManager:
             except Exception:
                 pass
         try:
-            # ещё раз убеждаемся, что транспорт стоит (на случай, если setStop не сработал)
             traci.vehicle.setSpeedMode(veh_id, 0)
             traci.vehicle.setSpeed(veh_id, 0.0)
         except Exception:

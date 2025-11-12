@@ -1,6 +1,4 @@
-import libsumo as traci
-
-USING_LIBSUMO = True
+import traci
 
 
 def get_all_tls_phases(tls_id):
