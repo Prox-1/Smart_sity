@@ -8,3 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
+
+# SUMO config file
+sumo_config

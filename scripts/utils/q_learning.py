@@ -149,6 +149,9 @@ def calculate_local_reward(
     controlled_edges: Iterable[str],
     metrics: Optional["RewardMetricsCache"] = None,
     *,
+    speed_weight: float = 1.5,
+    wtime_weight: float = 1.2,
+    occ_weight: float =0.7,
     use_accident_penalty: bool = False,
     accident_weight: float = 0.35,
     accident_provider=None,
@@ -202,7 +205,7 @@ def calculate_local_reward(
     normalized_waiting_time = (mean_waiting_time / MAX_WAITING_TIME) if MAX_WAITING_TIME > 0 else 0.0
 
     # Скомбинированная награда: положительная за скорость, отрицательные за ожидание и загрузку
-    reward = 1.5 * speed_score - 1.2 * normalized_waiting_time - 0.70 * mean_occ
+    reward = speed_weight * speed_score - wtime_weight * normalized_waiting_time - occ_weight * mean_occ
 
     # При необходимости учитываем штрафы за аварии
     if use_accident_penalty and accident_provider is not None:
@@ -218,6 +221,9 @@ def calculate_global_reward(
     controlled_edges_dict: Dict[str, Iterable[str]],
     unique_edges_count: int,
     metrics: Optional["RewardMetricsCache"] = None,
+    speed_weight: float = 1.0,
+    wtime_weight: float = 1.0,
+    occ_weight: float =0.5,
 ) -> float:
     """
     Вычисляет глобальную награду для набора светофоров (агентов), используя агрегированные метрики.
@@ -247,7 +253,7 @@ def calculate_global_reward(
     occ = s["occ"]
 
     # Комбинация метрик для глобальной награды — веса можно подстроить под задачу
-    reward = 1.0 * speed_score - 1.0 * normalized_waiting_time - 0.5 * occ
+    reward = speed_weight * speed_score - wtime_weight * normalized_waiting_time - occ_weight * occ
 
     return float(reward)
 

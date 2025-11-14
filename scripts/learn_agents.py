@@ -1,8 +1,9 @@
 import os
 import sys
+import json
 import random
 import libsumo as traci
-
+import test_agents
 from tqdm import tqdm
 from pathlib import Path
 from utils import q_learning, sumo_utils
@@ -21,25 +22,18 @@ if 'SUMO_HOME' in os.environ:
 else:
     sys.exit("Environment variable 'SUMO_HOME' is not set. Please set it to your SUMO installation directory.")
 
-sumoBinary = "sumo"  # sumo-gui
+sumoBinary = "sumo"
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 relative_cfg = Path("sumo_config") / "2025-09-20-14-52-18" / "osm.sumocfg"
 candidate_cfg = (PROJECT_DIR / relative_cfg).resolve()
 sumoConfig = str(candidate_cfg)
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-output_base_dir = os.path.join(
-    script_dir, "..", "agents", "test_speed")
-os.makedirs(output_base_dir, exist_ok=True)
-
 sumoCmd = [sumoBinary, "-c", sumoConfig, "--no-warnings",
            "--no-step-log", "true",
            "--verbose", "false"]
 # При необходимости можно управлять шагом интегрирования:
 # "--step-length", "1.0",
-
-actions = [+30, +20, +10, 0, -10, -20, -30]
 
 # --- Параметры аварий ---
 ENABLE_ACCIDENTS = True
@@ -52,6 +46,62 @@ ACCIDENT_MAX_CONCURRENT = 20    # одновременно активных ав
 # --- Параметры обучения Q-learning ---
 NUM_EPISODES = 100      # Количество эпизодов обучения
 MAX_SIMULATION_STEPS = 7200  # Макс число шагов в эпизоде (например, 1 час)
+ACTIONS = [+30, +20, +10, 0, -10, -20, -30] # Действия совершаемые агентами
+LEARNING_RATE = 0.1 # Коэффициент скорости обучения
+DISCOUNT_FACTOR = 0.99 # Значимость будущих побед(наград) в возможный ущерб текущей победе(награде)
+EPSILON = 1.0 # Коэффициент случайности выбора
+EPSILON_DECAY = 0.999 # Скорость падения(уменьшения) коэффициент случайности выбора 
+MIN_EPSILON = 0.01 # Минимальное значение коэффициента случайности выбора
+USE_ACCIDENT_PENALTY = True  # Использовать наличие аварии на дороге при подсчете награды
+LOCAL_SPEED_WEIGHT = 1.5 # Вес скорости при подсчете локальной награды
+LOCAL_WTIME_WEIGHT = 1.2 # Вес времени ожидания на светофоре при подсчете локальной награды
+LOCAL_OCC_WEIGHT =0.7 # Вес загруженности полос при подсчете локальной награды
+GLOBAL_SPEED_WEIGHT = 1.0 # Вес скорости при подсчете глобальной награды
+GLOBAL_WTIME_WEIGHT = 1.0 # Вес времени ожидания на светофоре при подсчете глобальной награды
+GLOBAL_OCC_WEIGHT =0.5 # Вес загруженности полос при подсчете глобальной награды
+WEIGHT_LOCAL = 0.5 # Вес локальной награды при подсчете конечной награды
+WEIGHT_GLOBAL = 0.5 # Вес глобальной награды при подсчете конечной награды
+
+FILE_NAME = "total_reward_lr01_df099_epd0999_acc_in_rew_30_20_10_0_100eps_7200steps(l_reward_ 1.5 1.2 0.7 g_reward_ 1 1.0 0.5)"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+output_base_dir = os.path.join(
+    script_dir, "..", "agents", FILE_NAME)
+os.makedirs(output_base_dir, exist_ok=True)
+
+# Сохранение констант в config.json
+config = {
+    "AGENT_DIRECTORY_NAME": FILE_NAME,
+    "ENABLE_ACCIDENTS": ENABLE_ACCIDENTS,
+    "ACCIDENT_MODE": ACCIDENT_MODE,
+    "ACCIDENT_PROB_PER_STEP": ACCIDENT_PROB_PER_STEP,
+    "ACCIDENT_MIN_DURATION": ACCIDENT_MIN_DURATION,
+    "ACCIDENT_MAX_DURATION": ACCIDENT_MAX_DURATION,
+    "ACCIDENT_MAX_CONCURRENT": ACCIDENT_MAX_CONCURRENT,
+    "NUM_EPISODES": NUM_EPISODES,
+    "MAX_SIMULATION_STEPS": MAX_SIMULATION_STEPS,
+    "ACTIONS": ACTIONS,
+    "LEARNING_RATE": LEARNING_RATE,
+    "DISCOUNT_FACTOR": DISCOUNT_FACTOR,
+    "EPSILON": EPSILON,
+    "EPSILON_DECAY": EPSILON_DECAY,
+    "MIN_EPSILON": MIN_EPSILON,
+    "USE_ACCIDENT_PENALTY": USE_ACCIDENT_PENALTY,
+    "LOCAL_SPEED_WEIGHT": LOCAL_SPEED_WEIGHT,
+    "LOCAL_WTIME_WEIGHT": LOCAL_WTIME_WEIGHT,
+    "LOCAL_OCC_WEIGHT": LOCAL_OCC_WEIGHT,
+    "GLOBAL_SPEED_WEIGHT": GLOBAL_SPEED_WEIGHT,
+    "GLOBAL_WTIME_WEIGHT": GLOBAL_WTIME_WEIGHT,
+    "GLOBAL_OCC_WEIGHT": GLOBAL_OCC_WEIGHT,
+    "WEIGHT_LOCAL": WEIGHT_LOCAL,
+    "WEIGHT_GLOBAL": WEIGHT_GLOBAL
+}
+
+out_file = Path(output_base_dir) / "training_config.json"
+with out_file.open("w", encoding="utf-8") as f:
+    json.dump(config, f, ensure_ascii=False, indent=2)
+
+print(f"Конфигурация сохранена в {out_file}")
+
 
 # Снимок нулевого состояния для быстрого сброса мира между эпизодами
 STATE_SNAPSHOT_PATH = os.path.join(output_base_dir, "initial_state.xml")
@@ -74,12 +124,12 @@ try:
         agents[tls_id] = q_learning.QLearningAgent(
             tls_id=tls_id,
             states=states,
-            actions=actions,
-            learning_rate=0.1,
-            discount_factor=0.99,
-            epsilon=1.0,
-            epsilon_decay=0.999,
-            min_epsilon=0.01
+            actions=ACTIONS,
+            learning_rate=LEARNING_RATE,
+            discount_factor=DISCOUNT_FACTOR,
+            epsilon=EPSILON,
+            epsilon_decay=EPSILON_DECAY,
+            min_epsilon=MIN_EPSILON
         )
         controlled_edges_dict[tls_id] = controlled_edges
 
@@ -122,19 +172,19 @@ try:
             accident_manager = AccidentManager(
                 all_lanes,
                 used_vclasses,
-                rng=rng,
-                mode=ACCIDENT_MODE,
-                prob_per_step=ACCIDENT_PROB_PER_STEP,
-                min_duration_steps=ACCIDENT_MIN_DURATION,
-                max_duration_steps=ACCIDENT_MAX_DURATION,
-                max_concurrent=ACCIDENT_MAX_CONCURRENT,
-                min_margin_from_ends_m=10.0,
-                enable_markers=False,              # отключаем маркеры ради скорости
-                marker_color=(255, 0, 0, 255),
-                marker_layer=10,
-                marker_size=(12, 12),
-                marker_type="ACCIDENT",
-                marker_label="ДТП",
+                rng= rng,
+                mode= ACCIDENT_MODE,
+                prob_per_step= ACCIDENT_PROB_PER_STEP,
+                min_duration_steps= ACCIDENT_MIN_DURATION,
+                max_duration_steps= ACCIDENT_MAX_DURATION,
+                max_concurrent= ACCIDENT_MAX_CONCURRENT,
+                min_margin_from_ends_m= 10.0,
+                enable_markers= False,              # отключаем маркеры ради скорости
+                marker_color= (255, 0, 0, 255),
+                marker_layer= 10,
+                marker_size= (12, 12),
+                marker_type= "ACCIDENT",
+                marker_label= "ДТП",
             )
 
         total_reward_episode = {tls_id: 0.0 for tls_id in tls_ids}
@@ -193,7 +243,10 @@ try:
                 tls_ids,
                 controlled_edges_dict,
                 unique_edges_count,
-                metrics=metrics_cache,
+                metrics= metrics_cache,
+                speed_weight= GLOBAL_SPEED_WEIGHT,
+                wtime_weight= GLOBAL_WTIME_WEIGHT,
+                occ_weight= GLOBAL_OCC_WEIGHT,
             )
 
             # Обновления по каждому светофору
@@ -202,7 +255,10 @@ try:
                 local_reward = q_learning.calculate_local_reward(
                     controlled_edges_dict[tls_id],
                     metrics=metrics_cache,
-                    use_accident_penalty=False,
+                    use_accident_penalty= USE_ACCIDENT_PENALTY,
+                    speed_weight= LOCAL_SPEED_WEIGHT,
+                    wtime_weight= LOCAL_WTIME_WEIGHT,
+                    occ_weight= LOCAL_OCC_WEIGHT,
                     accident_weight=0.35,
                     accident_provider=lambda edges: accident_manager.get_edge_impacts(
                         edges)
@@ -211,7 +267,11 @@ try:
                 )
 
                 total_reward = q_learning.calculate_total_reward(
-                    local_reward, global_reward)
+                    local_reward= local_reward, 
+                    global_reward= global_reward,
+                    weight_local= WEIGHT_LOCAL,
+                    weight_global= WEIGHT_GLOBAL
+                    )
                 total_reward_episode[tls_id] += total_reward
 
                 # Текущее состояние
@@ -264,3 +324,8 @@ finally:
     except Exception as e:
         print(f"Error closing TraCI connection: {e}")
     print("Q-learning process finished.")
+
+try:
+    test_agents.main(FILE_NAME)
+except Exception:
+    pass
