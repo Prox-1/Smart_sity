@@ -10,4 +10,4 @@ wheels/
 .venv
 
 # SUMO config file
-sumo_config
+sumo_config/

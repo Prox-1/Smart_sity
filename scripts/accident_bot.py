@@ -31,7 +31,7 @@ from telegram.ext import (
 
 # Токен бота берётся из окружения TG_BOT_TOKEN или используется тестовый по умолчанию.
 BOT_TOKEN = os.environ.get(
-    "TG_BOT_TOKEN", "8473383190:AAEObZeIWhRW6sDsGu3AW56eTbzBuVAUB6I")
+    "TG_BOT_TOKEN", "##############################################")
 
 # Базовый URL API симуляции SUMO (локально по умолчанию)
 SIM_API = os.environ.get("SIM_API", "http://127.0.0.1:8081")
