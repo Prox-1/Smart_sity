@@ -1,4 +1,3 @@
-# utils/metrics_cache.py
 """
 Кэширование и получение метрик (по полосам/рёбрам) для использования в наградных
 функциях и мониторинге в симуляции TraCI.
@@ -11,8 +10,7 @@
 """
 
 from collections import defaultdict
-
-from typing import Dict, List, Iterable, Optional, Union
+from typing import Dict, Iterable, List, Optional, Union
 
 # Важно: import constants должен быть успешным, но часть имён может отсутствовать
 from traci import constants as tc
@@ -68,7 +66,7 @@ def unsubscribe_all_safe(traci_module) -> None:
             ("poi", "getIDList", "unsubscribe"),
             ("polygon", "getIDList", "unsubscribe"),
             # на случай, если используется
-            ("busstop", "getIDList", "unsubscribe")
+            ("busstop", "getIDList", "unsubscribe"),
         ]
 
         for domain_name, id_getter_name, unsub_name in domains:
@@ -127,12 +125,16 @@ class RewardMetricsCache:
     - waiting_among_waiting_only: усреднять waiting только по транспортам с wt>0 (по умолчанию True).
     """
 
-    def __init__(self, traci_module, edges: Iterable[str], all_lanes: Iterable[str],
-                 waiting_cache_enabled: bool = True,        # включить кэш среднего waiting time
-                 waiting_cache_period: int = 5,             # пересчитывать каждые N шагов
-                 waiting_accumulated: bool = False,         # использовать накопленный waiting?
-                 waiting_among_waiting_only: bool = True,   # среднее только по тем, у кого wt>0
-                 ) -> None:
+    def __init__(
+        self,
+        traci_module,
+        edges: Iterable[str],
+        all_lanes: Iterable[str],
+        waiting_cache_enabled: bool = True,  # включить кэш среднего waiting time
+        waiting_cache_period: int = 5,  # пересчитывать каждые N шагов
+        waiting_accumulated: bool = False,  # использовать накопленный waiting?
+        waiting_among_waiting_only: bool = True,  # среднее только по тем, у кого wt>0
+    ) -> None:
         # Сохраняем ссылку на traci
         self.traci = traci_module
 
@@ -148,21 +150,25 @@ class RewardMetricsCache:
 
         # HALTING varID может отсутствовать — используем прямой getter, если есть
         halt_candidates = [
-            "LAST_STEP_HALTING_NUMBER",                  # современное имя
-            "LAST_STEP_VEHICLE_HALTING_NUMBER",          # редкие сборки
-            "LANE_LAST_STEP_HALTING_NUMBER",             # экзотика
+            "LAST_STEP_HALTING_NUMBER",  # современное имя
+            "LAST_STEP_VEHICLE_HALTING_NUMBER",  # редкие сборки
+            "LANE_LAST_STEP_HALTING_NUMBER",  # экзотика
         ]
         self._halt_var_id = None
         for name in halt_candidates:
             if hasattr(tc, name):
                 self._halt_var_id = getattr(tc, name)
                 break
-        self._has_direct_halt = hasattr(
-            self.traci.lane, "getLastStepHaltingNumber")
+        self._has_direct_halt = hasattr(self.traci.lane, "getLastStepHaltingNumber")
 
         # Список переменных для подписки формируем динамически
         self._lane_vars: List[int] = []
-        for var_id in (self._veh_var_id, self._spd_var_id, self._occ_var_id, self._halt_var_id):
+        for var_id in (
+            self._veh_var_id,
+            self._spd_var_id,
+            self._occ_var_id,
+            self._halt_var_id,
+        ):
             if var_id is not None:
                 self._lane_vars.append(var_id)
 
@@ -228,7 +234,9 @@ class RewardMetricsCache:
                         if self._waiting_accumulated:
                             wt = float(self.traci.vehicle.getWaitingTime(vid))
                         else:
-                            wt = float(self.traci.vehicle.getAccumulatedWaitingTime(vid))
+                            wt = float(
+                                self.traci.vehicle.getAccumulatedWaitingTime(vid)
+                            )
                     except Exception:
                         wt = 0.0
 
@@ -387,8 +395,7 @@ class RewardMetricsCache:
                 halt = int(res.get(self._halt_var_id, 0))
             elif self._has_direct_halt:
                 try:
-                    halt = int(
-                        self.traci.lane.getLastStepHaltingNumber(lane_id))
+                    halt = int(self.traci.lane.getLastStepHaltingNumber(lane_id))
                 except Exception:
                     halt = 0
             else:
@@ -403,7 +410,9 @@ class RewardMetricsCache:
                 "occ": occ,
             }
 
-        if self._waiting_cache_enabled and (self._step_counter % self._waiting_cache_period == 0):
+        if self._waiting_cache_enabled and (
+            self._step_counter % self._waiting_cache_period == 0
+        ):
             try:
                 self.refresh_waiting_cache()
             except Exception:
@@ -438,8 +447,9 @@ class RewardMetricsCache:
                 "halting": halt_sum,
                 "speed": (speed_den and (speed_num / speed_den)) or 0.0,
                 "occ": (occ_cnt and (occ_sum / occ_cnt)) or 0.0,
-                "waiting_mean": float(self._waiting_cache.get(edge, 0.0)) if self._waiting_cache_enabled
-                                 else self._compute_edge_waiting_mean_now(edge),
+                "waiting_mean": float(self._waiting_cache.get(edge, 0.0))
+                if self._waiting_cache_enabled
+                else self._compute_edge_waiting_mean_now(edge),
             }
 
     # Доступ к метрикам
@@ -459,11 +469,14 @@ class RewardMetricsCache:
 
         Если для ребра нет данных — возвращается словарь с нулевыми значениями.
         """
-        return self._edge_stats.get(edge_id, {
-            "veh": 0, "halting": 0, "speed": 0.0, "occ": 0.0, "waiting_mean": 0.0
-        })
+        return self._edge_stats.get(
+            edge_id,
+            {"veh": 0, "halting": 0, "speed": 0.0, "occ": 0.0, "waiting_mean": 0.0},
+        )
 
-    def get_global_stats(self, edges: Optional[Iterable[str]] = None) -> Dict[str, Numeric]:
+    def get_global_stats(
+        self, edges: Optional[Iterable[str]] = None
+    ) -> Dict[str, Numeric]:
         """
         Аггрегировать глобальные метрики по набору рёбер (или по всем известным).
 

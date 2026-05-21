@@ -1,12 +1,12 @@
-import os
-import traci
-import itertools
 import collections
-import numpy as np
-
+import itertools
+import os
 from typing import Dict, Iterable, Optional
-from utils_traci import sumo_utils
 
+import numpy as np
+import traci
+
+from utils_traci import sumo_utils
 
 MAX_WAITING_TIME_PER_EDGE = 300
 
@@ -14,7 +14,7 @@ MAX_QUEUE_LENGTH_PER_EDGE = 50
 
 MAX_VEHICLES_ARRIVED_PER_STEP = 50
 
-MAX_SPEED = 70/3.6
+MAX_SPEED = 70 / 3.6
 
 
 def create_state_table(tls_id, controlled_edges):
@@ -35,14 +35,15 @@ def create_state_table(tls_id, controlled_edges):
     Возвращает:
         all_states: список кортежей — все возможные сочетания (phase + комбинации категорий очередей)
     """
-    queue_categories = ['Low', 'Medium', 'High']
+    queue_categories = ["Low", "Medium", "High"]
 
     phases = sumo_utils.get_all_tls_phases(tls_id)
 
     all_states = []
 
-    combinations_of_queues = list(itertools.product(
-        queue_categories, repeat=len(controlled_edges)))
+    combinations_of_queues = list(
+        itertools.product(queue_categories, repeat=len(controlled_edges))
+    )
 
     for phase in phases:
         for queue_combination in combinations_of_queues:
@@ -90,11 +91,11 @@ def data2queue_categories(controlled_edges):
 
     for edge_id in controlled_edges:
         if traci.edge.getWaitingTime(edge_id) < 10:
-            queue_cat.append('Low')
+            queue_cat.append("Low")
         elif traci.edge.getWaitingTime(edge_id) < 30:
-            queue_cat.append('Medium')
+            queue_cat.append("Medium")
         else:
-            queue_cat.append('High')
+            queue_cat.append("High")
 
     return queue_cat
 
@@ -136,10 +137,8 @@ def get_metrics(controlled_edges):
     halting_number = 0
 
     for edge_id in controlled_edges:
-        waiting_time += traci.edge.getWaitingTime(
-            edge_id)  # type: ignore
-        halting_number += traci.edge.getLastStepHaltingNumber(
-            edge_id)  # type: ignore
+        waiting_time += traci.edge.getWaitingTime(edge_id)  # type: ignore
+        halting_number += traci.edge.getLastStepHaltingNumber(edge_id)  # type: ignore
 
     return waiting_time, halting_number
 
@@ -184,11 +183,12 @@ def calculate_local_reward(
     veh = sum(s["veh"] for s in stats)
 
     # Среднее время ожидания по ребрам (среднее от mean для каждого ребра)
-    mean_waiting_time = sum(s["waiting_mean"] for s in stats) / len(stats) if stats else 0.0
+    mean_waiting_time = (
+        sum(s["waiting_mean"] for s in stats) / len(stats) if stats else 0.0
+    )
 
     # Взвешенная средняя скорость (по числу ед. транспорта)
-    mean_speed = (sum(s["speed"] * s["veh"]
-                  for s in stats) / veh) if veh > 0 else 0.0
+    mean_speed = (sum(s["speed"] * s["veh"] for s in stats) / veh) if veh > 0 else 0.0
 
     # Средняя загрузка (occupancy)
     mean_occ = sum(s["occ"] for s in stats) / len(stats) if stats else 0.0
@@ -198,7 +198,9 @@ def calculate_local_reward(
     MAX_WAITING_TIME = 300
 
     speed_score = (mean_speed / DESIRED_SPEED) if DESIRED_SPEED > 0 else 0.0
-    normalized_waiting_time = (mean_waiting_time / MAX_WAITING_TIME) if MAX_WAITING_TIME > 0 else 0.0
+    normalized_waiting_time = (
+        (mean_waiting_time / MAX_WAITING_TIME) if MAX_WAITING_TIME > 0 else 0.0
+    )
 
     # Скомбинированная награда: положительная за скорость, отрицательные за ожидание и загрузку
     reward = 1.5 * speed_score - 1.2 * normalized_waiting_time - 0.70 * mean_occ
@@ -241,8 +243,12 @@ def calculate_global_reward(
     MAX_GLOBAL_WAITING_TIME = 300 * len(all_edges)
 
     speed_score = (s["speed"] / DESIRED_SPEED) if DESIRED_SPEED > 0 else 0.0
-    halting_per_edge = (s["halting"] / max(1, len(all_edges)))
-    normalized_waiting_time = (s["sum_waiting_mean"] / MAX_GLOBAL_WAITING_TIME) if MAX_GLOBAL_WAITING_TIME > 0 else 0.0
+    halting_per_edge = s["halting"] / max(1, len(all_edges))
+    normalized_waiting_time = (
+        (s["sum_waiting_mean"] / MAX_GLOBAL_WAITING_TIME)
+        if MAX_GLOBAL_WAITING_TIME > 0
+        else 0.0
+    )
     occ = s["occ"]
 
     # Комбинация метрик для глобальной награды — веса можно подстроить под задачу
@@ -251,7 +257,9 @@ def calculate_global_reward(
     return float(reward)
 
 
-def calculate_total_reward(local_reward, global_reward, weight_local=0.5, weight_global=0.5):
+def calculate_total_reward(
+    local_reward, global_reward, weight_local=0.5, weight_global=0.5
+):
     """
     Комбинирует локальную и глобальную награды в одну суммарную метрику.
 
@@ -264,7 +272,7 @@ def calculate_total_reward(local_reward, global_reward, weight_local=0.5, weight
     Возвращает:
         комбинированную награду (float).
     """
-    return weight_local*local_reward + weight_global*global_reward
+    return weight_local * local_reward + weight_global * global_reward
 
 
 class QLearningAgent:
@@ -291,7 +299,17 @@ class QLearningAgent:
         load_q_table(filename) -> None
     """
 
-    def __init__(self, tls_id, states, actions, learning_rate=0.1, discount_factor=0.9, epsilon=0.1, epsilon_decay=0.995, min_epsilon=0.01):
+    def __init__(
+        self,
+        tls_id,
+        states,
+        actions,
+        learning_rate=0.1,
+        discount_factor=0.9,
+        epsilon=0.1,
+        epsilon_decay=0.995,
+        min_epsilon=0.01,
+    ):
         """
         Инициализация агента. Заполняет Q-таблицу нулевыми значениями для всех пар (state, action).
 
@@ -316,7 +334,8 @@ class QLearningAgent:
 
         # Используем defaultdict для удобства: при обращении к несуществующему состоянию будет создан словарь действий со значениями 0.0
         self.q_table = collections.defaultdict(
-            lambda: {action: 0.0 for action in self.actions})
+            lambda: {action: 0.0 for action in self.actions}
+        )
 
         # Явно инициализируем записи для известных состояний
         for state_list in self.states:
@@ -373,8 +392,7 @@ class QLearningAgent:
         """
         current_q = self.get_q_value(state, action)
         max_q_next = max(self.q_table[next_state].values())
-        new_q = current_q + self.lr * \
-            (reward + self.gamma * max_q_next - current_q)
+        new_q = current_q + self.lr * (reward + self.gamma * max_q_next - current_q)
         self.q_table[state][action] = new_q
 
     def decay_epsilon(self):
@@ -408,8 +426,8 @@ class QLearningAgent:
             loaded_data = np.load(filename, allow_pickle=True).item()
             # Преобразуем загруженный dict обратно в defaultdict с default-словари действий
             self.q_table = collections.defaultdict(
-                lambda: {action: 0.0 for action in self.actions}, loaded_data)
+                lambda: {action: 0.0 for action in self.actions}, loaded_data
+            )
             # print(f"Q-table for {self.tls_id} loaded from {filename}")
         else:
-            print(
-                f"No Q-table file found at {filename}. Starting with fresh Q-table.")
+            print(f"No Q-table file found at {filename}. Starting with fresh Q-table.")

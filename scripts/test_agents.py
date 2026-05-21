@@ -13,7 +13,7 @@ from utils.accident_utils import AccidentManager
 USING_LIBSUMO = True
 # ----------------- Параметры -----------------
 STEP_INTERVAL = 10             # собирать метрики каждые 10 шагов
-MAX_SIMULATION_STEPS = 3600
+MAX_SIMULATION_STEPS = 3600 # ОБЫЧНО 3600
 def main(agent_filename):
     # SUMO
     os.environ["PYTHONHASHSEED"] = "0"
